@@ -546,7 +546,7 @@ export default {
        background: none;
        border:1px solid rgba(55,62,97,1)!important;
        color: #B0B9E4!important;
-       width: 130px;
+       width: 130px!important;
        background-color: #2D365A!important;
     }
     .el-select .el-input.is-focus .el-input__inner{
@@ -560,10 +560,10 @@ export default {
     }
     .el-select-dropdown{
         background: #373E61!important;
-        border: none;
+        border: none!important;
     }
     .el-popper[x-placement^=bottom] .popper__arrow{
-        display: none;
+        display: none!important;
     }
     .el-select-dropdown__item{
         color: #B0B9E4!important;
@@ -583,25 +583,15 @@ export default {
     }
     .el-timeline-item__timestamp{
         color: #676E8E!important;
-        font-size: 12px;
+        font-size: 12px!important;
     }
     .el-timeline-item__node{
         background: #676E8E!important;
     }
     .el-timeline-item__node--normal{
-        left: -5px;
-        width: 20px;
-        height: 20px;
-    }
-    .el-button{
-        background: none;
-        border: none;
-        padding: 0;
-        border-radius: 0;
-    } 
-    .el-button:focus, .el-button:hover{
-        border-color: #212943!important;
-        background-color: #212943!important;
+        left: -5px!important;
+        width: 20px!important;
+        height: 20px!important;
     }
     .charts {
         width: 100%;
@@ -630,6 +620,7 @@ export default {
     }
     .max-width-container{
         flex: 1;
+        -webkit-box-flex: 1;
         padding: 10px 20px; 
         @include box-sizing(border-box);
         @include flex-box;
@@ -660,6 +651,7 @@ export default {
             }
             .charts-wrap{
                 flex: 1;
+                -webkit-box-flex: 1;
                 background: #212943;
                 .notice{
                     display: flex;
@@ -687,6 +679,7 @@ export default {
         .time-line-container{
             position: relative;
             flex: 1;
+            -webkit-box-flex: 1;
             min-width: 400px;
             margin-left: 10px;
             @include flex-box;
@@ -710,6 +703,7 @@ export default {
                 padding: 0 20px;
                 @include box-sizing(border-box);
                 flex: 1;
+                -webkit-box-flex: 1;
                 overflow-y: auto;
             }
         }
@@ -775,6 +769,7 @@ export default {
         padding: 20px 30px;
         .head-left{
             flex: 1;
+            -webkit-box-flex: 1;
             p{
                 font-size:14px;
                 color:rgba(103,110,142,1);
