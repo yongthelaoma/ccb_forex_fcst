@@ -40,19 +40,18 @@
                 <div class="charts-wrap">
                     <div id="main" style="width: 650px;height:300px;"></div>
                     <ul class="notice">
-                        <li>
-                            <i class="el-icon-message-solid"></i>
-                            <i class="el-icon-success"></i>
-                            <!-- <el-tooltip class="item" effect="dark" content="Top Right 提示文字" placement="top-end">
+                        <li v-for="(item, index) in noticeList" :key="index" :class="{'red': item.noticeStatus, 'blue': !item.noticeStatus}">
+                            <el-tooltip class="item" effect="dark" placement="top-end">
+                                <div slot="content">
+                                    <p>{{item.timestamp}}</p>
+                                    <p>{{item.label}}</p>
+                                    <p>{{item.txt}}</p>
+                                </div>
                                 <el-button class="predictNotice">
-                                    <i class="el-icon-message-solid"></i>
-                                    <i class="el-icon-success"></i>
+                                    <i class="el-icon-message-solid"></i></br>
+                                    <i :class="{'el-icon-error': !item.noticeStatus, 'el-icon-success': item.noticeStatus}"></i>
                                 </el-button>
-                            </el-tooltip> -->
-                        </li>
-                        <li class="blue">
-                            <i class="el-icon-message-solid"></i>
-                            <i class="el-icon-error"></i>
+                            </el-tooltip>
                         </li>
                     </ul>
                 </div>
@@ -118,20 +117,10 @@
                  <div class="predict">
                     <ul>
                         <p>预测统计</p>
-                        <li>
-                            <span>今日</span>
-                            <span>准确率100%</span>
-                            <span>正确10个 错误10个，共20个</span>
-                        </li>
-                        <li>
-                            <span>今日</span>
-                            <span>准确率100%</span>
-                            <span>正确10个 错误10个，共20个</span>
-                        </li>
-                        <li>
-                            <span>今日</span>
-                            <span>准确率100%</span>
-                            <span>正确10个 错误10个，共20个</span>
+                        <li v-for="(item, index) in predictList" :key="index">
+                            <span>{{item.date}}</span>
+                            <span>准确率{{item.rate}}%</span>
+                            <span>正确{{item.post}}个 错误{{item.neg}}个，共{{item.total}}个</span>
                         </li>
                     </ul>
                  </div>
@@ -196,14 +185,33 @@ export default {
             usdjpy: {},
             gpbusd: {},
             usdcad: {},
+            newsStatus: false,
+            noticeList: [
+                {
+                    label: "上涨",
+                    score: "62.5322043896",
+                    timestamp: "2019-05-09 18:23:34",
+                    noticeStatus: true,
+                    txt: '民生银行发行不超过400亿元无固定期限资本债券获银保监会批准。'
+                },
+                {
+                    label: "下跌",
+                    score: "62.5322043896",
+                    timestamp: "2019-05-09 18:00:17",
+                    noticeStatus: false,
+                    txt: '西班牙代理首相桑切斯称，新政府将很快组建。'
+                }
+            ],
+            predictList: []
         }
     },
     created() {
         this.updateNews();
         this.updateRate();
         this.formatTime();
-        this.updateIK();
+        // this.newsStatus && this.updateIK();
         this.updateVerb();
+        this.fetchPredict();
     },
     methods: {
         formatTime() {
@@ -407,6 +415,8 @@ export default {
                 this.timelineStatus = false;
             }
             ws.onmessage = (res) => {
+                // this.newsStatus = true;
+                this.updateIK();
                 this.timelineStatus = false;
                 if (JSON.parse(res.data).timeList instanceof Array) {
                     this.timeList = JSON.parse(res.data).timeList;
@@ -440,6 +450,7 @@ export default {
             const time = this.timeStatus;
             const url = `${this.baseUrl}/ws/historical?symbol=${rate[0]}&currency=${rate[1]}&endDateTime=&duration=3600&durationUnit=SECOND&barSize=${time}&keepUpToDate=true`;
             const ws = new WebSocket(url);
+            const that = this;
             ws.onerror = (error) => {
                 this.$message.error(error);
             }
@@ -452,6 +463,18 @@ export default {
                 item.push(data.low);
                 item.push(data.high);
                 this.kData.push(item);
+                that.timeList.map((list) => {
+                    if (list.timestamp === data.time) {
+                        if (data.label === '上涨') {
+                            data.noticeStatus = true
+                        }
+                        if (data.label === '下跌') {
+                            data.noticeStatus = false
+                        } 
+                        that.noticeList.push(data);
+                    }
+                })
+                console.dir(that.noticeList);
             }
         },
         // 获取实时汇率
@@ -487,7 +510,6 @@ export default {
                     this[item] = data;
                     this[item].rate = ((data.bid - data.close) / data.close).toFixed(4);
                     this[item].ratePrecent = `${(((data.bid - data.close) / data.close) * 100).toFixed(2)}%`;
-                    console.dir(this[item]);
                 }
             }
             ws.onerror = (error) => {
@@ -499,6 +521,16 @@ export default {
             this.handleVerbUpdate(['GBP', 'USD'], 'gpbusd');
             this.handleVerbUpdate(['USD', 'CAD'], 'usdcad');
         },
+        fetchPredict() {
+            const wsurl = `${this.baseUrl}/ws/analyse`
+            const ws = new WebSocket(wsurl);
+            ws.onmessage = (res) => {
+                const data = JSON.parse(res.data);
+                if (data instanceof Array) {
+                    this.predictList = data;
+                }
+            }
+        }
 
     },
     components: {
@@ -642,14 +674,16 @@ export default {
                     @include box-sizing(border-box);
                     li{
                         width: 20px;
-                        color: #F76260;
-                        &.blue{
-                           color: #00A699;
+                        margin-right: 20px;
+                        &.red{
+                            i{
+                                color: #F76260;
+                            }
                         }
-                    }
-                    .predictNotice{
-                        i{
-                            color: #F76260!important;
+                        &.blue{
+                           i{
+                                color: #00A699!important;
+                            }
                         }
                     }
                 }
