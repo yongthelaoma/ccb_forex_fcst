@@ -1,0 +1,108 @@
+@import 'variables';
+@import 'mixin';
+
+//基础样式设置
+html, body {
+    line-height: 1;
+    height: 100%;
+    font-family: 'PingFang SC', 'STHeitiSC-Light', 'Helvetica-Light', arial, sans-serif, 'Droid Sans Fallback';
+    // user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: auto;
+    color: #ffffff; 
+}
+
+// 全局设置浏览器滚动条样式
+// ::-webkit-scrollbar {
+//     width: 8px;
+//     height: 8px;
+//     background: rgba(255, 0, 0, 0.01);
+// }
+
+// ::-webkit-scrollbar-thumb {
+//     border: 2px solid transparent;
+//     background-clip: padding-box;
+//     background-color: #cccccc;
+//     border-radius: 16px;
+// }
+
+// ::-webkit-scrollbar-track {
+//     background-color: transparent;
+// }
+
+// ::-webkit-scrollbar-track-piece {
+//     background-color: transparent;
+// }
+
+// /* Handle on hover */
+// ::-webkit-scrollbar-thumb:hover {
+//     background-color: #c3c3c3;
+// }
+
+// banner 按钮
+.blue-btn{
+    font-size: $font-size-16;
+    color: $color-font-white;
+    background-image: linear-gradient(-90deg, #4D1EF1 0%, #2A83FF 100%);
+    border-radius: 4px;
+    height: 48px;
+    line-height: 48px;
+    padding: 0 39px;
+    cursor: pointer;
+}
+.blue-btn-small{
+    font-size: $font-size-12;
+    height: 28px;
+    line-height: 28px;
+    padding: 0 15px;
+}
+
+// pc端固定版心宽度
+.content-center{
+    max-width: 1020px;
+    margin: 0 auto;
+}
+
+// 公共一级标题样式
+.title-first{
+    font-size: $font-size-32;
+    color: $color-font-black;
+}
+.title-second{
+    font-size: $font-size-18;
+    color: $color-font-black;
+}
+.title-third{
+    font-size: $font-size-16;
+    color: $color-font-grey;
+}
+.marginTop12{
+    margin-top: 12px;
+}
+.web{
+    display: block;
+}
+.wrap{
+    display: none;
+}
+.left-bubble {
+    background: #FFFFFF;
+    box-shadow: 0 5px 10px 0 #E9E9E9;
+    border-radius: 0px 20px 20px 20px;
+    color: #666666;
+}
+
+.right-bubble {
+    background: #3389EE;
+    box-shadow: 0 5px 10px 0 #E9E9E9;
+    border-radius: 20px 0px 20px 20px;
+    color: #FFFFFF;
+}
+@media (max-width: 767px) {
+    .web{
+        display: none;
+    }
+    .wrap{
+        display: block;
+    } 
+}

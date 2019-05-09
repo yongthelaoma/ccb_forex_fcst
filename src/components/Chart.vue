@@ -1,0 +1,793 @@
+<template>
+    <div class="charts">
+        <div class="header">
+            <div>
+                <img src="../assets/images/logo.svg">
+            </div>
+        </div>
+        <div class="max-width-container">
+            <div class="charts-container">
+                <div class="charts-head">
+                    <div class="head-left">
+                        <p>实时行情</p>
+                        <div class="box-item-top">
+                            <span class="title-one">{{moneyValue}}</span>
+                            <span class="title-one">{{bid}}</span>
+                            <span class="result" :class="{'down': currentRate < 0, 'up': currentRate > 0}">{{currentRate > 0 ? '+' : ''}}{{currentRate}}</span>
+                        </div>
+                    </div>
+                    <div class="head-right">
+                        <el-select v-model="timeValue" placeholder="请选择" @change="handleTimeChange">
+                            <el-option
+                            size="mini"
+                            v-for="item in timeOptions"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
+                        <el-select v-model="moneyValue" placeholder="请选择" @change="handleRateChange">
+                            <el-option
+                            size="mini"
+                            v-for="item in typeOptions"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </div>
+                </div>
+                <div class="charts-wrap">
+                    <div id="main" style="width: 650px;height:300px;"></div>
+                    <ul class="notice">
+                        <li>
+                            <el-tooltip class="item" effect="dark" content="Top Right 提示文字" placement="top-end">
+                                <el-button class="predictNotice" :class="{'red': ''}">
+                                    <i class="el-icon-message-solid"></i>
+                                    <i></i>
+                                </el-button>
+                            </el-tooltip>
+                        </li>
+                    </ul>
+                </div>
+                <div  class="charts-controls">
+                    <ul class="ul-item">
+                        <li>
+                           <div class="li-item-top">
+                               <p class="rate-name">USD/JPY</p>
+                               <p class="rate-res">{{usdjpy.bid}}&nbsp;<i :class="{'el-icon-caret-top': usdjpy.rate > 0, 'el-icon-caret-bottom': usdjpy.rate < 0}"></i><i :class="{'blue': usdjpy.rate < 0, 'red': usdjpy.rate > 0}">{{usdjpy.ratePrecent > 0 ? '+' : ''}}{{usdjpy.ratePrecent}}</i></p>
+                               <span>{{usdjpy.rate > 0 ? '+' : ''}}{{usdjpy.rate}}</span>
+                           </div>
+                           <div class="li-item-bottom">
+                               <span>高 <i>{{usdjpy.high}}</i></span>
+                               <span>开 <i>{{usdjpy.open}}</i></span>
+                               <span>低 <i>{{usdjpy.low}}</i></span>
+                               <span>收 <i>{{usdjpy.close}}</i></span>
+                           </div>
+                        </li>
+                        <li>
+                           <div class="li-item-top">
+                               <p class="rate-name">GBP/USD</p>
+                               <p class="rate-res">{{gpbusd.bid}}&nbsp;<i :class="{'el-icon-caret-top': gpbusd.rate > 0, 'el-icon-caret-bottom': gpbusd.rate < 0}"></i><i :class="{'blue': gpbusd.rate < 0, 'red': gpbusd.rate > 0}">{{gpbusd.ratePrecent > 0 ? '+' : ''}}{{gpbusd.ratePrecent}}</i></p>
+                               <span>{{gpbusd.rate > 0 ? '+' : ''}}{{gpbusd.rate}}</span>
+                           </div>
+                           <div class="li-item-bottom">
+                               <span>高 <i>{{gpbusd.high}}</i></span>
+                               <span>开 <i>{{gpbusd.open}}</i></span>
+                               <span>低 <i>{{gpbusd.low}}</i></span>
+                               <span>收 <i>{{gpbusd.close}}</i></span>
+                           </div>
+                        </li>
+                        <li>
+                           <div class="li-item-top">
+                               <p class="rate-name">USD/CAD</p>
+                               <p class="rate-res">{{usdcad.bid}}&nbsp;<i :class="{'el-icon-caret-top': usdcad.rate > 0, 'el-icon-caret-bottom': usdcad.rate < 0}"></i><i :class="{'blue': usdcad.rate < 0, 'red': usdcad.rate > 0}">{{usdcad.ratePrecent > 0 ? '+' : ''}}{{usdcad.ratePrecent}}</i></p>
+                               <span>{{usdcad.rate > 0 ? '+' : ''}}{{usdcad.rate}}</span>
+                           </div>
+                           <div class="li-item-bottom">
+                               <span>高 <i>{{usdcad.high}}</i></span>
+                               <span>开 <i>{{usdcad.open}}</i></span>
+                               <span>低 <i>{{usdcad.low}}</i></span>
+                               <span>收 <i>{{usdcad.close}}</i></span>
+                           </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="time-line-container">
+                <basic-loading v-show="timelineStatus"></basic-loading>
+                <div class="top-title">
+                    <span>资讯信息</span>
+                    <span>{{currentTime}}</span>
+                </div>
+                <el-timeline class="k-time-line">
+                    <el-timeline-item placement="top" v-for="(item, index) in timeList"
+                    :key="index"
+                    :timestamp="item.timestamp">
+                        <el-card>
+                            <p>{{item.txt}}</p>
+                        </el-card>
+                    </el-timeline-item>
+                </el-timeline>
+                 <div class="predict">
+                    <ul>
+                        <p>预测统计</p>
+                        <li>
+                            <span>今日</span>
+                            <span>准确率100%</span>
+                            <span>正确10个 错误10个，共20个</span>
+                        </li>
+                        <li>
+                            <span>今日</span>
+                            <span>准确率100%</span>
+                            <span>正确10个 错误10个，共20个</span>
+                        </li>
+                        <li>
+                            <span>今日</span>
+                            <span>准确率100%</span>
+                            <span>正确10个 错误10个，共20个</span>
+                        </li>
+                    </ul>
+                 </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+import BasicLoading from './Loading';
+
+const echarts = require('echarts');
+export default {
+    name: 'charts',
+    data() {
+        return {
+            input: '',
+            timeList: [],
+            timeOptions: [{
+                value: '60/SECOND',
+                label: '1分钟'
+                }, {
+                value: '300/SECOND',
+                label: '5分钟'
+                }, {
+                value: '600/SECOND',
+                label: '10分钟'
+            }],
+            timeValue: '1分钟',
+            timelineStatus: true,
+            typeOptions: [
+                {
+                    value: 'EUR/USD',
+                    label: 'EUR/USD'
+                },
+                {
+                    value: 'USD/JPY',
+                    label: 'USD/JPY'
+                },
+                {
+                    value: 'GBP/USD',
+                    label: 'GBP/USD'
+                },
+                {
+                    value: 'USD/CAD',
+                    label: 'USD/CAD'
+                },
+                {
+                    value: 'AUD/USD',
+                    label: 'AUD/USD'
+                }
+            ],
+            moneyValue: 'EUR/USD',
+            myChart: '',
+            baseUrl: 'ws://e6dc1271.ngrok.io',
+            rateStatus: 'EUR/USD',
+            timeStatus: '60/SECOND',
+            currentTime: '',
+            currentRate: '0.0000',
+            bid: '0',
+            kData: [],
+            usdjpy: {},
+            gpbusd: {},
+            usdcad: {},
+        }
+    },
+    created() {
+        this.updateNews();
+        this.updateRate();
+        this.formatTime();
+        this.updateIK();
+        this.updateVerb();
+    },
+    methods: {
+        formatTime() {
+            setInterval(() => {
+                const date = new Date()
+                const month = date.getMonth() + 1 > 10 ? date.getMonth() + 1 : `0${date.getMonth() + 1}`;
+                const ss = date.getSeconds() > 10 ? date.getSeconds() : `0${date.getSeconds()}`;
+                this.currentTime = `${month}月${date.getDate()}日 ${date.getHours()}:${date.getMinutes()}:${ss}`
+            }, 1000);
+        },
+        calculateMA() {
+            function calculateMA(dayCount, data) {
+                var result = [];
+                for (var i = 0, len = data.length; i < len; i++) {
+                    if (i < dayCount) {
+                        result.push('-');
+                        continue;
+                    }
+                    var sum = 0;
+                    for (var j = 0; j < dayCount; j++) {
+                        sum += data[i - j][1];
+                    }
+                    result.push(sum / dayCount);
+                }
+                return result;
+            }
+        },
+        formateData() {
+            var rawData = [
+                ['2015/12/31', '3570.47', '3539.18', '3538.35', '3580.6'], 
+                ['2015/12/30', '3566.73', '3572.88', '3538.11', '3573.68'], 
+                ['2015/12/29', '3528.4', '3563.74', '3515.52', '3564.17'], 
+                ['2015/12/28', '3635.77', '3533.78', '3533.78', '3641.59'], 
+                ['2015/12/25', '3614.05', '3627.91', '3601.74', '3635.26'], 
+                ['2015/12/24', '3631.31', '3612.49', '3572.28', '3640.22'], 
+                ['2015/12/23', '3653.28', '3636.09', '3633.03', '3684.57'], 
+                ['2015/12/22', '3645.99', '3651.77', '3616.87', '3652.63'], 
+                ['2015/12/21', '3568.58', '3642.47', '3565.75', '3651.06'], 
+                ['2015/12/18', '3574.94', '3578.96', '3568.16', '3614.7'], 
+                ['2015/12/17', '3533.63', '3580', '3533.63', '3583.41'], 
+                ['2015/12/16', '3522.09', '3516.19', '3506.29', '3538.69'], 
+                ['2015/12/15', '3518.13', '3510.35', '3496.85', '3529.96'], 
+                ['2015/12/14', '3403.51', '3520.67', '3399.28', '3521.78'], 
+                ['2015/12/11', '3441.6', '3434.58', '3410.92', '3455.55'], 
+                ['2015/12/10', '3469.81', '3455.5', '3446.27', '3503.65'], 
+                ['2015/12/9', '3462.58', '3472.44', '3454.88', '3495.7'], 
+                ['2015/12/8', '3518.65', '3470.07', '3466.79', '3518.65'], 
+                ['2015/12/7', '3529.81', '3536.93', '3506.62', '3543.95'], 
+                ['2015/12/4', '3558.15', '3524.99', '3510.41', '3568.97'], 
+                ['2015/12/3', '3525.73', '3584.82', '3517.23', '3591.73'], 
+                ['2015/12/2', '3450.28', '3536.91', '3427.66', '3538.85']
+            ]
+            // const rawData = this.kData || [];
+            let dates = [];
+            let data = [];
+            if (rawData.length > 0) {
+                dates = rawData.map(function (item) {
+                    return item[0];
+                });
+
+                data = rawData.map(function (item) {
+                    return [+item[1], +item[2], +item[3], +item[4]];
+                });
+            }
+            var option = {
+                backgroundColor: '#212943',
+                legend: {
+                    data: ['日K', 'MA5', 'MA10'],
+                    inactiveColor: '#777',
+                    textStyle: {
+                        color: '#fff'
+                    }
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        animation: false,
+                        type: 'cross',
+                        lineStyle: {
+                            color: '#376df4',
+                            width: 2,
+                            opacity: 1
+                        }
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    data: dates,
+                    axisLine: { lineStyle: { color: '#8392A5' } },
+                    splitLine: {
+                        show: true,
+                        lineStyle:{
+                            color: ['#373E61'],
+                            width: 1,
+                            type: 'solid'
+                        }
+                    }
+                },
+                yAxis: {
+                    scale: true,
+                    axisLine: { lineStyle: { color: '#8392A5' } },
+                    splitLine: { show: false },
+                    position: 'left',
+                    splitLine: {
+                        show: true,
+                        lineStyle:{
+                            color: ['#373E61'],
+                            width: 1,
+                            type: 'dashed'
+                        }
+                    }
+                },
+                grid: {
+                    bottom: 80
+                },
+                animation: false,
+                series: [
+                    {
+                        type: 'candlestick',
+                        name: '日K',
+                        data: data,
+                        itemStyle: {
+                            normal: {
+                                color: '#FD1050',
+                                color0: '#0CF49B',
+                                borderColor: '#FD1050',
+                                borderColor0: '#0CF49B'
+                            }
+                        }
+                    },
+                    {
+                        name: 'MA5',
+                        type: 'line',
+                        data: this.calculateMA(5, data),
+                        smooth: true,
+                        showSymbol: false,
+                        lineStyle: {
+                            normal: {
+                                width: 1
+                            }
+                        }
+                    },
+                    {
+                        name: 'MA10',
+                        type: 'line',
+                        data: this.calculateMA(10, data),
+                        smooth: true,
+                        showSymbol: false,
+                        lineStyle: {
+                            normal: {
+                                width: 1
+                            }
+                        }
+                    }
+                ],
+                dataZoom: [{
+                    textStyle: {
+                        color: '#8392A5'
+                    },
+                    handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+                    handleSize: '80%',
+                    dataBackground: {
+                        areaStyle: {
+                            color: '#8392A5'
+                        },
+                        lineStyle: {
+                            opacity: 0.8,
+                            color: '#8392A5'
+                        }
+                    },
+                    handleStyle: {
+                        color: '#fff',
+                        shadowBlur: 3,
+                        shadowColor: 'rgba(0, 0, 0, 0.6)',
+                        shadowOffsetX: 2,
+                        shadowOffsetY: 2
+                    }
+                }, {
+                    type: 'inside'
+                }],
+            };
+            return option;
+        },
+        initCharts() {
+            this.myChart = echarts.init(document.getElementById('main'));
+            // 数据意义：开盘(open)，收盘(close)，最低(lowest)，最高(highest)
+            this.myChart.setOption(this.formateData());
+        },
+        // 获取实时新闻
+        updateNews() {
+            // 打开新的websocket 连接
+            const ws = new WebSocket(`${this.baseUrl}/ws/live`);
+            ws.onopen = () => {
+                this.timelineStatus = true;
+            }
+            ws.onerror = (error) => {
+                this.$message.error(error);
+                this.timelineStatus = false;
+            }
+            ws.onclose = () => {
+                this.timelineStatus = false;
+            }
+            ws.onmessage = (res) => {
+                this.timelineStatus = false;
+                if (JSON.parse(res.data).timeList instanceof Array) {
+                    this.timeList = JSON.parse(res.data).timeList;
+                    // data.map((item) => {
+                    //     item.date = item.timestamp.split(' ')[0];
+                    // })
+                    // this.transformArr(data);
+                }
+            }
+        },
+        // transformArr(orig) {
+        //     var newArr = [],
+        //         types = {},
+        //         i, j, cur;
+        //     for (i = 0, j = orig.length; i < j; i++) {
+        //         cur = orig[i];
+        //         if (!(cur.date in types)) {
+        //             types[cur.date] = {type: cur.date, news: []};
+        //         }
+        //         types[cur.date].news.push(cur);
+        //         if (newArr.indexOf(types[cur.date]) === -1) {
+        //             newArr.push(types[cur.date]);
+        //         }
+        //     }
+        //     console.dir(newArr);
+        //     return newArr;
+        // },
+        // 获取k线数据
+        updateIK() {
+            const rate = this.moneyValue.split('/');
+            const time = this.timeStatus.split('/');
+            const url = `${this.baseUrl}/ws/historical?symbol=${rate[0]}&currency=${rate[1]}&endDateTime=&duration=${time[0]}&durationUnit=day&barSize=_1_min&keepUpToDate=true`;
+            const ws = new WebSocket(url);
+            ws.onerror = (error) => {
+                this.$message.error(error);
+            }
+            ws.onmessage = (res) => {
+                debugger;
+                const data = JSON.parse(res.data);
+                const item = [];
+                item.push(data.time);
+                item.push(data.open);
+                item.push(data.close);
+                item.push(data.low);
+                item.push(data.high);
+                this.kData.push(item);
+            }
+        },
+        // 获取实时汇率
+        updateRate() {
+            const rate = this.moneyValue.split('/');
+            const wsurl = `${this.baseUrl}/ws/forex?symbol=${rate[0]}&currency=${rate[1]}`
+            const ws = new WebSocket(wsurl);
+            ws.onmessage = (res) => {
+                const data = JSON.parse(res.data);
+                this.currentRate = ((data.bid - data.close) / data.close).toFixed(4);
+                this.bid = data.bid;
+            }
+            ws.onerror = (error) => {
+                this.$message.error(error);
+            }
+        },
+        handleTimeChange(value) {
+            this.timeStatus = value;
+            this.updateIK();
+        },
+        handleRateChange(value) {
+            this.rateStatus = value;
+            this.updateIK();
+        },
+        handleVerbUpdate(rate, item) {
+            const wsurl = `${this.baseUrl}/ws/forex?symbol=${rate[0]}&currency=${rate[1]}`
+            const ws = new WebSocket(wsurl);
+            ws.onmessage = (res) => {
+                const data = JSON.parse(res.data);
+                if (data instanceof Object) {
+                    this[item] = data;
+                    this[item].rate = ((data.bid - data.close) / data.close).toFixed(4);
+                    this[item].ratePrecent = `${(((data.bid - data.close) / data.close) * 100).toFixed(2)}%`;
+                    console.dir(this[item]);
+                }
+            }
+            ws.onerror = (error) => {
+                this.$message.error(error);
+            }
+        },
+        updateVerb() {
+            this.handleVerbUpdate(['USD', 'JPY'], 'usdjpy');
+            this.handleVerbUpdate(['GBP', 'USD'], 'gpbusd');
+            this.handleVerbUpdate(['USD', 'CAD'], 'usdcad');
+        },
+
+    },
+    components: {
+        BasicLoading
+    },
+    mounted() {
+        this.initCharts();
+        setInterval(() => {
+            this.myChart.setOption(this.formateData());
+        }, 1000)
+    }
+}
+</script>
+
+<style lang="scss">
+    @import '@/assets/styles/global.scss';
+    // elemnet reset
+    .el-input__inner{
+       background: none;
+       border:1px solid rgba(55,62,97,1);
+       color: #B0B9E4;
+       width: 130px;
+    }
+    .el-select .el-input.is-focus .el-input__inner{
+        border-color: rgba(55,62,97,1);
+    }
+    .el-select .el-input__inner:focus{
+        border-color: rgba(55,62,97,1);
+    }
+    .el-input__inner:hover{
+        border-color: rgba(55,62,97,1);
+    }
+    .el-select-dropdown{
+        background: #373E61;
+        border: none;
+    }
+    .el-popper[x-placement^=bottom] .popper__arrow{
+        display: none;
+    }
+    .el-select-dropdown__item{
+        color: #B0B9E4;
+    }
+    .el-select-dropdown__item.hover, .el-select-dropdown__item:hover{
+        background-color: #373E61;
+    }
+    .el-card{
+        background: #2A3354;
+        border-radius:2px;
+        border: 1px solid #2A3354;
+        color: #B0B9E4;
+        line-height: 20px;
+    }
+    .el-timeline-item__tail{
+        border-left: 2px dashed #676E8E;
+    }
+    .el-timeline-item__timestamp{
+        color: #676E8E;
+        font-size: 12px;
+    }
+    .el-timeline-item__node{
+        background: #676E8E;
+    }
+    .el-timeline-item__node--normal{
+        left: -5px;
+        width: 20px;
+        height: 20px;
+    }
+    .el-button{
+        background: none;
+        border: none;
+        padding: 0;
+        border-radius: 0;
+    } 
+    .el-button:focus, .el-button:hover{
+        border-color: #212943;
+        background-color: #212943;
+    }
+    .charts {
+        width: 100%;
+        height: 100vh;
+        background: #151934;
+        @include flex-box;
+        flex-direction: column;
+    }
+    .header{
+        background: #212943;
+        height: 50px;
+        width: 100%;
+        >div{
+            height: 50px;
+            width: 50px;
+            background: #2A3354;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            img{
+                width: 20px;
+                height: auto;
+                vertical-align: middle;
+            }
+        }
+    }
+    .max-width-container{
+        flex: 1;
+        padding: 10px 20px; 
+        @include box-sizing(border-box);
+        @include flex-box;
+        flex-direction: row;
+        height: 100%;
+        overflow: hidden;
+        .charts-container{
+            @include flex-box;
+            flex-direction: column;
+            overflow: hidden;
+            .charts-controls{
+                height: 188px;
+                margin-top: 10px;
+                @include box-sizing(border-box);
+                .ul-item{
+                    height: 100%;
+                    @include flex-box;
+                    flex-direction: row;
+                    justify-content: space-between;
+                    li{
+                        width: calc(33.33% - 7px);
+                        background: #212943;
+                        height: 100%;
+                        padding: 10px;
+                        @include box-sizing(border-box);
+                    }
+                }
+            }
+            .charts-wrap{
+                flex: 1;
+                background: #212943;
+                .notice{
+                    display: flex;
+                    flex-direction: row;
+                    flex-wrap: wrap;
+                    .predictNotice{
+                        i{
+                            color: #F76260!important;
+                        }
+                    }
+                }
+            }
+        }
+        .time-line-container{
+            position: relative;
+            flex: 1;
+            min-width: 400px;
+            margin-left: 10px;
+            @include flex-box;
+            flex-direction: column;
+            .top-title{
+                background: #212943;
+                @include box-sizing(border-box);
+                padding: 20px;
+                font-size:14px;
+                color: #ffffff;
+                span{
+                    display: inline-block;
+                    margin-right: 10px;
+                    &:first-child{
+                        color: #676E8E;
+                    }
+                }
+            }
+            .k-time-line{
+                background: #212943;
+                padding: 0 20px;
+                @include box-sizing(border-box);
+                flex: 1;
+                overflow-y: auto;
+            }
+        }
+    }
+    .li-item-top{
+        border-bottom: 1px dashed #373E61;
+        padding-bottom: 15px;
+        .rate-name{
+            font-size:14px;
+            margin-bottom: 10px;
+            color:rgba(176,185,228,1);
+        }
+        .rate-res{
+            font-size:18px;
+            line-height:26px;
+            color:rgba(255,255,255,1);
+            margin-bottom: 6px;
+            i{
+                font-size:12px;
+                font-style: normal;
+                color: #676E8E;
+                &.red, &.el-icon-caret-top{
+                    color:rgba(242,92,98,1);
+                }
+                &.blue, &.el-icon-caret-bottom{
+                    color: #1AC998;
+                }
+            }
+        }
+        span{
+            font-size: 14px;
+            color: #676E8E;
+        }
+    }
+    .li-item-bottom{
+        padding-top: 15px;
+        @include flex-box;
+        flex-direction: row;
+        flex-wrap: wrap;
+        span{
+            width: 50%;
+            font-size:12px;
+            margin-bottom: 12px;
+            i{
+                font-style: normal;
+                color:rgba(176,185,228,1);
+            }
+            color:rgba(103,110,142,1);
+        }
+    }
+    .charts-head{
+        @include flex-box;
+        @include box-sizing(border-box);
+        flex-direction: row;
+        justify-content: space-between;
+        background: #212943;
+        padding: 20px 30px;
+        .head-left{
+            flex: 1;
+            p{
+                font-size:14px;
+                color:rgba(103,110,142,1);
+                line-height:20px;
+                margin-bottom: 10px;
+            }
+            .box-item-top{
+                margin-bottom: 6px;
+            }
+            .title-one{
+                display: inline-block;
+                font-size:18px;
+                color:rgba(255,255,255,1);
+                line-height:26px;
+                margin-right: 40px;
+            }
+            .result{
+                font-size:12px;
+                line-height:20px;
+                color: #fff;
+                &.down{
+                    color:rgba(26,201,152,1);
+                }
+                &.up{
+                    color: #F25C62;
+                }
+            }
+        }
+    }
+    .predict{
+        height: 188px;
+        width: 100%;
+        padding-top: 10px;
+        ul{
+            height: 100%;
+            background: #212943;
+            padding: 10px;
+            @include box-sizing(border-box);
+            p{
+                font-size:14px;
+                color:rgba(103,110,142,1);
+            }
+            li{
+                font-size: 12px;
+                margin-top: 10px;
+                background:rgba(42,51,84,1);
+                border-radius:2px;
+                padding: 14px 10px;
+                @include box-sizing(border-box);
+                span{
+                    display: inline-block;
+                    &:first-child{
+                        color:rgba(176,185,228,1);
+                        width: 80px;
+                    }
+                    &:nth-child(2){
+                        color: #FFFFFF;
+                        margin-right: 10px;
+                    }
+                    &:last-child{
+                        color: #B0B9E4;
+                    }
+                }
+            }
+        }
+    }
+</style>
