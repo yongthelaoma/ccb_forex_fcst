@@ -1,10 +1,10 @@
 <template>
     <div class="charts">
-        <div class="header">
+        <!-- <div class="header">
             <div>
                 <img src="../assets/images/logo.svg">
             </div>
-        </div>
+        </div> -->
         <div class="max-width-container">
             <div class="charts-container">
                 <div class="charts-head">
