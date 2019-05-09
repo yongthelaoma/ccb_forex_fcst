@@ -544,48 +544,49 @@ export default {
     // elemnet reset
     .el-input__inner{
        background: none;
-       border:1px solid rgba(55,62,97,1);
-       color: #B0B9E4;
+       border:1px solid rgba(55,62,97,1)!important;
+       color: #B0B9E4!important;
        width: 130px;
+       background-color: #2D365A!important;
     }
     .el-select .el-input.is-focus .el-input__inner{
-        border-color: rgba(55,62,97,1);
+        border-color: rgba(55,62,97,1)!important;
     }
     .el-select .el-input__inner:focus{
-        border-color: rgba(55,62,97,1);
+        border-color: rgba(55,62,97,1)!important;
     }
     .el-input__inner:hover{
-        border-color: rgba(55,62,97,1);
+        border-color: rgba(55,62,97,1)!important;
     }
     .el-select-dropdown{
-        background: #373E61;
+        background: #373E61!important;
         border: none;
     }
     .el-popper[x-placement^=bottom] .popper__arrow{
         display: none;
     }
     .el-select-dropdown__item{
-        color: #B0B9E4;
+        color: #B0B9E4!important;
     }
     .el-select-dropdown__item.hover, .el-select-dropdown__item:hover{
-        background-color: #373E61;
+        background-color: #373E61!important;
     }
     .el-card{
-        background: #2A3354;
-        border-radius:2px;
-        border: 1px solid #2A3354;
-        color: #B0B9E4;
-        line-height: 20px;
+        background: #2A3354!important;
+        border-radius:2px!important;
+        border: 1px solid #2A3354!important;
+        color: #B0B9E4!important;
+        line-height: 20px!important;
     }
     .el-timeline-item__tail{
-        border-left: 2px dashed #676E8E;
+        border-left: 2px dashed #676E8E!important;
     }
     .el-timeline-item__timestamp{
-        color: #676E8E;
+        color: #676E8E!important;
         font-size: 12px;
     }
     .el-timeline-item__node{
-        background: #676E8E;
+        background: #676E8E!important;
     }
     .el-timeline-item__node--normal{
         left: -5px;
@@ -599,8 +600,8 @@ export default {
         border-radius: 0;
     } 
     .el-button:focus, .el-button:hover{
-        border-color: #212943;
-        background-color: #212943;
+        border-color: #212943!important;
+        background-color: #212943!important;
     }
     .charts {
         width: 100%;
