@@ -175,7 +175,7 @@ export default {
             ],
             moneyValue: 'EUR/USD',
             myChart: '',
-            baseUrl: 'ws://e6dc1271.ngrok.io',
+            baseUrl: 'ws:0dc55c5c.ngrok.io',
             rateStatus: 'EUR/USD',
             timeStatus: '_1_min',
             currentTime: '',
@@ -194,9 +194,9 @@ export default {
         this.updateNews();
         this.updateRate();
         this.formatTime();
-        this.updateIK();
         this.updateVerb();
         this.fetchPredict();
+        this.updateIK();
     },
     methods: {
         formatTime() {
@@ -389,15 +389,10 @@ export default {
                 this.timelineStatus = false;
             }
             ws.onmessage = (res) => {
-                // this.newsStatus = true;
-                // this.updateIK();
+                this.newsStatus = true;
                 this.timelineStatus = false;
                 if (JSON.parse(res.data).timeList instanceof Array) {
                     this.timeList = JSON.parse(res.data).timeList;
-                    // data.map((item) => {
-                    //     item.date = item.timestamp.split(' ')[0];
-                    // })
-                    // this.transformArr(data);
                 }
             }
         },
@@ -436,57 +431,65 @@ export default {
                 item.push(data.close);
                 item.push(data.low);
                 item.push(data.high);
-                this.kData.push(item);
-                this.noticeList = [
-                    {
-                        name: 'highest value',
-                        coord: ['2019-05-09 21:41:00', 1.120025],
-                        value: '涨',
-                        itemStyle: {
-                            normal: {color: '#F25C62'}
-                        }
-                    },
-                    {
-                        name: 'lowest value',
-                        coord: ['2019-05-09 21:49:00', 1.120765],
-                        value: '跌',
-                        itemStyle: {
-                            normal: {color: '#1AC998'}
-                        }
-
-                    }
-                ]
-                // if (that.timeList.length > 0) {
-                //     that.timeList.map((list) => {
-                //         if (list.timestamp === data.time) {
-                //             if (data.label === '上涨') {
-                //                 const temp1 = [];
-                //                 temp1.push(data.time);
-                //                 temp1.push(data.close);
-                //                 this.noticeList.push({
-                //                     name: 'highest value',
-                //                     coord: temp1,
-                //                     value: list.txt,
-                //                     itemStyle: {
-                //                         normal: {color: '#F25C62'}
-                //                     }
-                //                 }) 
-                //             }
-                //             if (data.label === '下跌') {
-                //                 const temp = [];
-                //                 temp2.push(data.time);
-                //                 temp2.push(data.close);
-                //                 this.noticeList.push({
-                //                     name: 'highest value',
-                //                     coord: temp2,
-                //                     value: list.txt,
-                //                     itemStyle: {
-                //                         normal: {color: '#F25C62'}
-                //                     }
-                //                 }) 
-                //             } 
+                that.kData.push(item);
+                // this.noticeList = [
+                //     {
+                //         name: 'highest value',
+                //         coord: ['2019-05-09 21:41:00', 1.120025],
+                //         value: '涨',
+                //         itemStyle: {
+                //             normal: {color: '#F25C62'}
                 //         }
-                //     })
+                //     },
+                //     {
+                //         name: 'lowest value',
+                //         coord: ['2019-05-09 21:49:00', 1.120765],
+                //         value: '跌',
+                //         itemStyle: {
+                //             normal: {color: '#1AC998'}
+                //         }
+
+                //     }
+                // ]
+                // if (that.timeList.length > 0) {
+                    for (var i = 0; i < that.timeList.length; i++) {
+                        for (var j = 0; j < that.kData.length; j++) {
+                            console.log(that.timeList[i].timestamp + '----'+ that.kData[j][0])
+                            if (that.timeList[i].timestamp === that.kData[j].time) {
+                                // console.log(that.timeList[i].timestamp + '----'+ that.kData[j][0])
+                            }
+                        }
+                    }
+                    // that.timeList.map((list) => {
+                    //     if (list.timestamp === data.time) {
+                    //         if (data.label === '上涨') {
+                    //             const temp1 = [];
+                    //             temp1.push(data.time);
+                    //             temp1.push(data.close);
+                    //             this.noticeList.push({
+                    //                 name: 'highest value',
+                    //                 coord: temp1,
+                    //                 value: list.txt,
+                    //                 itemStyle: {
+                    //                     normal: {color: '#F25C62'}
+                    //                 }
+                    //             }) 
+                    //         }
+                    //         if (data.label === '下跌') {
+                    //             const temp = [];
+                    //             temp2.push(data.time);
+                    //             temp2.push(data.close);
+                    //             this.noticeList.push({
+                    //                 name: 'highest value',
+                    //                 coord: temp2,
+                    //                 value: list.txt,
+                    //                 itemStyle: {
+                    //                     normal: {color: '#F25C62'}
+                    //                 }
+                    //             }) 
+                    //         } 
+                    //     }
+                    // })
                 // }
                 // console.dir(that.noticeList);
             }
