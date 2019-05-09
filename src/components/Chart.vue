@@ -310,7 +310,7 @@ export default {
                             data: this.noticeList,
                             tooltip: {
                                 formatter: function (param) {
-                                    return param.name;
+                                    return param.name.split('，').join('</br>');
                                 }
                             },
                         }
@@ -440,7 +440,7 @@ export default {
                                 temp1.push(that.timeList[i].timestamp);
                                 temp1.push(that.kData[j][2]);
                                 that.noticeList.push({
-                                    name: that.timeList[i].txt,
+                                    name: that.timeList[i].txt.substring(0,20),
                                     coord: temp1,
                                     value: '涨',
                                     itemStyle: {
@@ -453,7 +453,7 @@ export default {
                                 temp1.push(that.timeList[i].timestamp);
                                 temp1.push(that.kData[j][2]);
                                 that.noticeList.push({
-                                    name: that.timeList[i].txt,
+                                    name: that.timeList[i].txt.substring(0,20),
                                     coord: temp1,
                                     value: '跌',
                                     itemStyle: {
