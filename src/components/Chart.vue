@@ -60,7 +60,7 @@
                         <li>
                            <div class="li-item-top">
                                <p class="rate-name">USD/JPY</p>
-                               <p class="rate-res">{{usdjpy.bid}}&nbsp;<i :class="{'el-icon-caret-top': usdjpy.rate > 0, 'el-icon-caret-bottom': usdjpy.rate < 0}"></i><i :class="{'blue': usdjpy.rate < 0, 'red': usdjpy.rate > 0}">{{usdjpy.ratePrecent > 0 ? '+' : ''}}{{usdjpy.ratePrecent}}</i></p>
+                               <p class="rate-res"><span class="res">{{usdjpy.bid}}</span><i :class="{'el-icon-caret-top': usdjpy.rate > 0, 'el-icon-caret-bottom': usdjpy.rate < 0}"></i><i :class="{'blue': usdjpy.rate < 0, 'red': usdjpy.rate > 0}">{{usdjpy.ratePrecent > 0 ? '+' : ''}}{{usdjpy.ratePrecent}}</i></p>
                                <span>{{usdjpy.rate > 0 ? '+' : ''}}{{usdjpy.rate}}</span>
                            </div>
                            <div class="li-item-bottom">
@@ -73,7 +73,7 @@
                         <li>
                            <div class="li-item-top">
                                <p class="rate-name">GBP/USD</p>
-                               <p class="rate-res">{{gpbusd.bid}}&nbsp;<i :class="{'el-icon-caret-top': gpbusd.rate > 0, 'el-icon-caret-bottom': gpbusd.rate < 0}"></i><i :class="{'blue': gpbusd.rate < 0, 'red': gpbusd.rate > 0}">{{gpbusd.ratePrecent > 0 ? '+' : ''}}{{gpbusd.ratePrecent}}</i></p>
+                               <p class="rate-res"><span class="res">{{gpbusd.bid}}</span><i :class="{'el-icon-caret-top': gpbusd.rate > 0, 'el-icon-caret-bottom': gpbusd.rate < 0}"></i><i :class="{'blue': gpbusd.rate < 0, 'red': gpbusd.rate > 0}">{{gpbusd.ratePrecent > 0 ? '+' : ''}}{{gpbusd.ratePrecent}}</i></p>
                                <span>{{gpbusd.rate > 0 ? '+' : ''}}{{gpbusd.rate}}</span>
                            </div>
                            <div class="li-item-bottom">
@@ -86,7 +86,7 @@
                         <li>
                            <div class="li-item-top">
                                <p class="rate-name">USD/CAD</p>
-                               <p class="rate-res">{{usdcad.bid}}&nbsp;<i :class="{'el-icon-caret-top': usdcad.rate > 0, 'el-icon-caret-bottom': usdcad.rate < 0}"></i><i :class="{'blue': usdcad.rate < 0, 'red': usdcad.rate > 0}">{{usdcad.ratePrecent > 0 ? '+' : ''}}{{usdcad.ratePrecent}}</i></p>
+                               <p class="rate-res"><span class="res">{{usdcad.bid}}</span><i :class="{'el-icon-caret-top': usdcad.rate > 0, 'el-icon-caret-bottom': usdcad.rate < 0}"></i><i :class="{'blue': usdcad.rate < 0, 'red': usdcad.rate > 0}">{{usdcad.ratePrecent > 0 ? '+' : ''}}{{usdcad.ratePrecent}}</i></p>
                                <span>{{usdcad.rate > 0 ? '+' : ''}}{{usdcad.rate}}</span>
                            </div>
                            <div class="li-item-bottom">
@@ -732,6 +732,12 @@ export default {
             line-height:26px;
             color:rgba(255,255,255,1);
             margin-bottom: 6px;
+            span{
+                display: inline-block;
+                width: 85px;
+                color:rgba(255,255,255,1);
+                font-size: 18px;
+            }
             i{
                 font-size:12px;
                 font-style: normal;
