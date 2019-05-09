@@ -40,7 +40,7 @@
                 <div class="charts-wrap">
                     <div id="main" style="width: 650px;height:300px;"></div>
                     <ul class="notice">
-                        <li v-for="(item, index) in noticeList" :key="index" :class="{'red': item.noticeStatus, 'blue': !item.noticeStatus}">
+                        <!-- <li v-for="(item, index) in noticeList" :key="index" :class="{'red': item.noticeStatus, 'blue': !item.noticeStatus}">
                             <el-tooltip class="item" effect="dark" placement="top-end">
                                 <div slot="content">
                                     <p>{{item.timestamp}}</p>
@@ -52,7 +52,7 @@
                                     <i :class="{'el-icon-error': !item.noticeStatus, 'el-icon-success': item.noticeStatus}"></i>
                                 </el-button>
                             </el-tooltip>
-                        </li>
+                        </li> -->
                     </ul>
                 </div>
                 <div  class="charts-controls">
@@ -308,11 +308,11 @@ export default {
                                 show:true
                             },
                             data: this.noticeList,
-                            tooltip: {
-                                formatter: function (param) {
-                                    return param.name + '<br>' + (param.data.coord || '');
-                                }
-                            }
+                            // tooltip: {
+                            //     formatter: function (param) {
+                            //         return param.name + '<br>' + (param.data.coord || '');
+                            //     }
+                            // }
                         }
                     },
                     {
@@ -432,66 +432,38 @@ export default {
                 item.push(data.low);
                 item.push(data.high);
                 that.kData.push(item);
-                // this.noticeList = [
-                //     {
-                //         name: 'highest value',
-                //         coord: ['2019-05-09 21:41:00', 1.120025],
-                //         value: '涨',
-                //         itemStyle: {
-                //             normal: {color: '#F25C62'}
-                //         }
-                //     },
-                //     {
-                //         name: 'lowest value',
-                //         coord: ['2019-05-09 21:49:00', 1.120765],
-                //         value: '跌',
-                //         itemStyle: {
-                //             normal: {color: '#1AC998'}
-                //         }
-
-                //     }
-                // ]
-                // if (that.timeList.length > 0) {
-                    for (var i = 0; i < that.timeList.length; i++) {
-                        for (var j = 0; j < that.kData.length; j++) {
-                            console.log(that.timeList[i].timestamp + '----'+ that.kData[j][0])
-                            if (that.timeList[i].timestamp === that.kData[j].time) {
-                                // console.log(that.timeList[i].timestamp + '----'+ that.kData[j][0])
+                for (var i = 0; i < that.timeList.length; i++) {
+                    for (var j = 0; j < that.kData.length; j++) {
+                        if (that.timeList[i].timestamp === that.kData[j][0]) {
+                            if (that.timeList[i].label === '看涨') {
+                                const temp1 = [];
+                                temp1.push(that.timeList[i].timestamp);
+                                temp1.push(that.kData[j][2]);
+                                that.noticeList.push({
+                                    name: 'highest value',
+                                    coord: temp1,
+                                    value: '涨',
+                                    itemStyle: {
+                                        normal: {color: '#F25C62'}
+                                    }
+                                }) 
+                            }
+                            if (that.timeList[i].label === '看跌') {
+                                const temp1 = [];
+                                temp1.push(that.timeList[i].timestamp);
+                                temp1.push(that.kData[j][2]);
+                                that.noticeList.push({
+                                    name: 'highest value',
+                                    coord: temp1,
+                                    value: '跌',
+                                    itemStyle: {
+                                        normal: {color: '#1AC998'}
+                                    }
+                                }) 
                             }
                         }
                     }
-                    // that.timeList.map((list) => {
-                    //     if (list.timestamp === data.time) {
-                    //         if (data.label === '上涨') {
-                    //             const temp1 = [];
-                    //             temp1.push(data.time);
-                    //             temp1.push(data.close);
-                    //             this.noticeList.push({
-                    //                 name: 'highest value',
-                    //                 coord: temp1,
-                    //                 value: list.txt,
-                    //                 itemStyle: {
-                    //                     normal: {color: '#F25C62'}
-                    //                 }
-                    //             }) 
-                    //         }
-                    //         if (data.label === '下跌') {
-                    //             const temp = [];
-                    //             temp2.push(data.time);
-                    //             temp2.push(data.close);
-                    //             this.noticeList.push({
-                    //                 name: 'highest value',
-                    //                 coord: temp2,
-                    //                 value: list.txt,
-                    //                 itemStyle: {
-                    //                     normal: {color: '#F25C62'}
-                    //                 }
-                    //             }) 
-                    //         } 
-                    //     }
-                    // })
-                // }
-                // console.dir(that.noticeList);
+                }
             }
         },
         // 获取实时汇率
