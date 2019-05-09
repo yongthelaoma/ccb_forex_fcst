@@ -209,7 +209,7 @@ export default {
         this.updateNews();
         this.updateRate();
         this.formatTime();
-        // this.newsStatus && this.updateIK();
+        this.updateIK();
         this.updateVerb();
         this.fetchPredict();
     },
@@ -416,7 +416,7 @@ export default {
             }
             ws.onmessage = (res) => {
                 // this.newsStatus = true;
-                this.updateIK();
+                // this.updateIK();
                 this.timelineStatus = false;
                 if (JSON.parse(res.data).timeList instanceof Array) {
                     this.timeList = JSON.parse(res.data).timeList;
@@ -463,18 +463,18 @@ export default {
                 item.push(data.low);
                 item.push(data.high);
                 this.kData.push(item);
-                that.timeList.map((list) => {
-                    if (list.timestamp === data.time) {
-                        if (data.label === '上涨') {
-                            data.noticeStatus = true
-                        }
-                        if (data.label === '下跌') {
-                            data.noticeStatus = false
-                        } 
-                        that.noticeList.push(data);
-                    }
-                })
-                console.dir(that.noticeList);
+                // that.timeList.map((list) => {
+                //     if (list.timestamp === data.time) {
+                //         if (data.label === '上涨') {
+                //             data.noticeStatus = true
+                //         }
+                //         if (data.label === '下跌') {
+                //             data.noticeStatus = false
+                //         } 
+                //         that.noticeList.push(data);
+                //     }
+                // })
+                // console.dir(that.noticeList);
             }
         },
         // 获取实时汇率
