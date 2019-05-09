@@ -295,10 +295,10 @@ export default {
                         data: data,
                         itemStyle: {
                             normal: {
-                                color: '#1AC998', // 跌
-                                color0: '#F25C62', // 涨
-                                borderColor: '#1AC998',
-                                borderColor0: '#F25C62'
+                                color: '#F25C62', // 跌
+                                color0: '#1AC998', // 涨
+                                borderColor: '#F25C62',
+                                borderColor0: '#1AC998'
                             }
                         },
                         markPoint: {
