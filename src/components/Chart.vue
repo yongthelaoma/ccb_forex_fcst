@@ -151,13 +151,13 @@ export default {
             input: '',
             timeList: [],
             timeOptions: [{
-                value: '60/SECOND',
+                value: '_1_min',
                 label: '1分钟'
                 }, {
-                value: '300/SECOND',
+                value: '_5_mins',
                 label: '5分钟'
                 }, {
-                value: '600/SECOND',
+                value: '_10_mins',
                 label: '10分钟'
             }],
             timeValue: '1分钟',
@@ -188,7 +188,7 @@ export default {
             myChart: '',
             baseUrl: 'ws://e6dc1271.ngrok.io',
             rateStatus: 'EUR/USD',
-            timeStatus: '60/SECOND',
+            timeStatus: '_1_min',
             currentTime: '',
             currentRate: '0.0000',
             bid: '0',
@@ -437,8 +437,8 @@ export default {
         // 获取k线数据
         updateIK() {
             const rate = this.moneyValue.split('/');
-            const time = this.timeStatus.split('/');
-            const url = `${this.baseUrl}/ws/historical?symbol=${rate[0]}&currency=${rate[1]}&endDateTime=&duration=1&durationUnit=day&barSize=_1_min&keepUpToDate=true`;
+            const time = this.timeStatus;
+            const url = `${this.baseUrl}/ws/historical?symbol=${rate[0]}&currency=${rate[1]}&endDateTime=&duration=3600&durationUnit=SECOND&barSize=${time}&keepUpToDate=true`;
             const ws = new WebSocket(url);
             ws.onerror = (error) => {
                 this.$message.error(error);
@@ -470,9 +470,11 @@ export default {
         },
         handleTimeChange(value) {
             this.timeStatus = value;
+            this.kData = [];
             this.updateIK();
         },
         handleRateChange(value) {
+            this.kData = [];
             this.rateStatus = value;
             this.updateIK();
         },
