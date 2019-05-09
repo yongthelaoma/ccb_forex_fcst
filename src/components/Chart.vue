@@ -41,12 +41,18 @@
                     <div id="main" style="width: 650px;height:300px;"></div>
                     <ul class="notice">
                         <li>
-                            <el-tooltip class="item" effect="dark" content="Top Right 提示文字" placement="top-end">
-                                <el-button class="predictNotice" :class="{'red': ''}">
+                            <i class="el-icon-message-solid"></i>
+                            <i class="el-icon-success"></i>
+                            <!-- <el-tooltip class="item" effect="dark" content="Top Right 提示文字" placement="top-end">
+                                <el-button class="predictNotice">
                                     <i class="el-icon-message-solid"></i>
-                                    <i></i>
+                                    <i class="el-icon-success"></i>
                                 </el-button>
-                            </el-tooltip>
+                            </el-tooltip> -->
+                        </li>
+                        <li class="blue">
+                            <i class="el-icon-message-solid"></i>
+                            <i class="el-icon-error"></i>
                         </li>
                     </ul>
                 </div>
@@ -631,6 +637,15 @@ export default {
                     display: flex;
                     flex-direction: row;
                     flex-wrap: wrap;
+                    padding: 10px 40px 0;
+                    @include box-sizing(border-box);
+                    li{
+                        width: 20px;
+                        color: #F76260;
+                        &.blue{
+                           color: #00A699;
+                        }
+                    }
                     .predictNotice{
                         i{
                             color: #F76260!important;
