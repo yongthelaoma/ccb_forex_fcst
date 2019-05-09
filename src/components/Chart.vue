@@ -186,22 +186,7 @@ export default {
             gpbusd: {},
             usdcad: {},
             newsStatus: false,
-            noticeList: [
-                {
-                    label: "上涨",
-                    score: "62.5322043896",
-                    timestamp: "2019-05-09 18:23:34",
-                    noticeStatus: true,
-                    txt: '民生银行发行不超过400亿元无固定期限资本债券获银保监会批准。'
-                },
-                {
-                    label: "下跌",
-                    score: "62.5322043896",
-                    timestamp: "2019-05-09 18:00:17",
-                    noticeStatus: false,
-                    txt: '西班牙代理首相桑切斯称，新政府将很快组建。'
-                }
-            ],
+            noticeList: [],
             predictList: []
         }
     },
@@ -240,30 +225,6 @@ export default {
             }
         },
         formateData() {
-            // var rawData = [
-            //     ['2015/12/31', '3570.47', '3539.18', '3538.35', '3580.6'], 
-            //     ['2015/12/30', '3566.73', '3572.88', '3538.11', '3573.68'], 
-            //     ['2015/12/29', '3528.4', '3563.74', '3515.52', '3564.17'], 
-            //     ['2015/12/28', '3635.77', '3533.78', '3533.78', '3641.59'], 
-            //     ['2015/12/25', '3614.05', '3627.91', '3601.74', '3635.26'], 
-            //     ['2015/12/24', '3631.31', '3612.49', '3572.28', '3640.22'], 
-            //     ['2015/12/23', '3653.28', '3636.09', '3633.03', '3684.57'], 
-            //     ['2015/12/22', '3645.99', '3651.77', '3616.87', '3652.63'], 
-            //     ['2015/12/21', '3568.58', '3642.47', '3565.75', '3651.06'], 
-            //     ['2015/12/18', '3574.94', '3578.96', '3568.16', '3614.7'], 
-            //     ['2015/12/17', '3533.63', '3580', '3533.63', '3583.41'], 
-            //     ['2015/12/16', '3522.09', '3516.19', '3506.29', '3538.69'], 
-            //     ['2015/12/15', '3518.13', '3510.35', '3496.85', '3529.96'], 
-            //     ['2015/12/14', '3403.51', '3520.67', '3399.28', '3521.78'], 
-            //     ['2015/12/11', '3441.6', '3434.58', '3410.92', '3455.55'], 
-            //     ['2015/12/10', '3469.81', '3455.5', '3446.27', '3503.65'], 
-            //     ['2015/12/9', '3462.58', '3472.44', '3454.88', '3495.7'], 
-            //     ['2015/12/8', '3518.65', '3470.07', '3466.79', '3518.65'], 
-            //     ['2015/12/7', '3529.81', '3536.93', '3506.62', '3543.95'], 
-            //     ['2015/12/4', '3558.15', '3524.99', '3510.41', '3568.97'], 
-            //     ['2015/12/3', '3525.73', '3584.82', '3517.23', '3591.73'], 
-            //     ['2015/12/2', '3450.28', '3536.91', '3427.66', '3538.85']
-            // ]
             const rawData = this.kData || [];
             let dates = [];
             let data = [];
@@ -271,7 +232,6 @@ export default {
                 dates = rawData.map(function (item) {
                     return item[0];
                 });
-
                 data = rawData.map(function (item) {
                     return [+item[1], +item[2], +item[3], +item[4]];
                 });
@@ -340,6 +300,19 @@ export default {
                                 borderColor: '#1AC998',
                                 borderColor0: '#F25C62'
                             }
+                        },
+                        markPoint: {
+                            // symbol: 'path://M16.288 30.272q0-0.256-0.288-0.256-1.056 0-1.824-0.768t-0.736-1.824q0-0.288-0.288-0.288t-0.288 0.288q0 1.312 0.928 2.24t2.208 0.896q0.288 0 0.288-0.288zM4.384 25.152h23.232q-4.768-5.376-4.768-14.88 0-0.896-0.416-1.856t-1.248-1.856-2.144-1.44-3.040-0.544-3.040 0.544-2.144 1.44-1.248 1.856-0.416 1.856q0 9.504-4.768 14.88zM30.848 25.152q0 0.928-0.672 1.6t-1.6 0.672h-8q0 1.888-1.344 3.232t-3.232 1.344-3.232-1.344-1.344-3.232h-8q-0.928 0-1.6-0.672t-0.672-1.6q0.896-0.768 1.632-1.568t1.504-2.144 1.344-2.848 0.864-3.68 0.352-4.64q0-2.688 2.112-5.024t5.472-2.848q-0.16-0.32-0.16-0.672 0-0.736 0.512-1.216t1.216-0.512 1.216 0.512 0.512 1.216q0 0.352-0.16 0.672 3.392 0.512 5.472 2.848t2.112 5.024q0 2.496 0.352 4.64t0.896 3.68 1.312 2.848 1.536 2.144 1.6 1.568z',
+                            symbolSize: 50,
+                            label: {
+                                show:true
+                            },
+                            data: this.noticeList,
+                            tooltip: {
+                                formatter: function (param) {
+                                    return param.name + '<br>' + (param.data.coord || '');
+                                }
+                            }
                         }
                     },
                     {
@@ -393,6 +366,7 @@ export default {
                     type: 'inside'
                 }]
             };
+            
             return option;
         },
         initCharts() {
@@ -463,17 +437,57 @@ export default {
                 item.push(data.low);
                 item.push(data.high);
                 this.kData.push(item);
-                // that.timeList.map((list) => {
-                //     if (list.timestamp === data.time) {
-                //         if (data.label === '上涨') {
-                //             data.noticeStatus = true
+                this.noticeList = [
+                    {
+                        name: 'highest value',
+                        coord: ['2019-05-09 21:41:00', 1.120025],
+                        value: '涨',
+                        itemStyle: {
+                            normal: {color: '#F25C62'}
+                        }
+                    },
+                    {
+                        name: 'lowest value',
+                        coord: ['2019-05-09 21:49:00', 1.120765],
+                        value: '跌',
+                        itemStyle: {
+                            normal: {color: '#1AC998'}
+                        }
+
+                    }
+                ]
+                // if (that.timeList.length > 0) {
+                //     that.timeList.map((list) => {
+                //         if (list.timestamp === data.time) {
+                //             if (data.label === '上涨') {
+                //                 const temp1 = [];
+                //                 temp1.push(data.time);
+                //                 temp1.push(data.close);
+                //                 this.noticeList.push({
+                //                     name: 'highest value',
+                //                     coord: temp1,
+                //                     value: list.txt,
+                //                     itemStyle: {
+                //                         normal: {color: '#F25C62'}
+                //                     }
+                //                 }) 
+                //             }
+                //             if (data.label === '下跌') {
+                //                 const temp = [];
+                //                 temp2.push(data.time);
+                //                 temp2.push(data.close);
+                //                 this.noticeList.push({
+                //                     name: 'highest value',
+                //                     coord: temp2,
+                //                     value: list.txt,
+                //                     itemStyle: {
+                //                         normal: {color: '#F25C62'}
+                //                     }
+                //                 }) 
+                //             } 
                 //         }
-                //         if (data.label === '下跌') {
-                //             data.noticeStatus = false
-                //         } 
-                //         that.noticeList.push(data);
-                //     }
-                // })
+                //     })
+                // }
                 // console.dir(that.noticeList);
             }
         },
@@ -540,6 +554,11 @@ export default {
         this.initCharts();
         setInterval(() => {
             this.myChart.setOption(this.formateData());
+            if (this.noticeList.length > 0) {
+                var option =  this.myChart.getOption()
+                option.series[0].markPoint.data.push(this.noticeList);
+                this.myChart.setOption(option);
+            }
         }, 1000)
     }
 }
