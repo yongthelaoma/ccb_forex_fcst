@@ -1,11 +1,6 @@
 <template>
     <div class="charts">
-        <!-- <div class="header">
-            <div>
-                <img src="../assets/images/logo.svg">
-            </div>
-        </div> -->
-        <div class="max-width-container">
+        <div v-show="activeIndex === 0" class="max-width-container">
             <div class="charts-container">
                 <div class="charts-head">
                     <div class="head-left">
@@ -37,25 +32,11 @@
                         </el-select>
                     </div>
                 </div>
-                <div class="charts-wrap">
-                    <div id="main" style="width: 650px;height:300px;"></div>
-                    <ul class="notice">
-                        <!-- <li v-for="(item, index) in noticeList" :key="index" :class="{'red': item.noticeStatus, 'blue': !item.noticeStatus}">
-                            <el-tooltip class="item" effect="dark" placement="top-end">
-                                <div slot="content">
-                                    <p>{{item.timestamp}}</p>
-                                    <p>{{item.label}}</p>
-                                    <p>{{item.txt}}</p>
-                                </div>
-                                <el-button class="predictNotice">
-                                    <i class="el-icon-message-solid"></i></br>
-                                    <i :class="{'el-icon-error': !item.noticeStatus, 'el-icon-success': item.noticeStatus}"></i>
-                                </el-button>
-                            </el-tooltip>
-                        </li> -->
-                    </ul>
+                <div class="charts-wrap" id="chartsWrap">
+                    <div id="main" style="width: 550px;height:300px;"></div>
                 </div>
                 <div  class="charts-controls">
+                    <p class="rate-title">实时汇率</p>
                     <ul class="ul-item">
                         <li>
                            <div class="li-item-top">
@@ -126,6 +107,17 @@
                  </div>
             </div>
         </div>
+        <div v-show="activeIndex === 1" class="max-width-container common-bg-box">
+            产品说明
+        </div>
+        <div v-show="activeIndex === 2" class="max-width-container common-bg-box">
+            原理说明
+        </div>
+        <div class="header">
+            <ul>
+                <li @click="handleTab(index)" :class="{'active': activeIndex === index}" v-for="(item, index) in navList" :key="index">{{item}}</li>
+            </ul>
+        </div>
     </div>
 </template>
 
@@ -175,7 +167,7 @@ export default {
             ],
             moneyValue: 'EUR/USD',
             myChart: '',
-            baseUrl: 'ws:9f7028ea.ngrok.io',
+            baseUrl: 'ws:8ae5ab05.ngrok.io',
             rateStatus: 'EUR/USD',
             timeStatus: '_1_min',
             currentTime: '',
@@ -187,7 +179,9 @@ export default {
             usdcad: {},
             newsStatus: false,
             noticeList: [],
-            predictList: []
+            predictList: [],
+            navList: ['财经事件监控', '产品说明', '原理说明'],
+            activeIndex: 0,
         }
     },
     created() {
@@ -199,6 +193,9 @@ export default {
         this.updateIK();
     },
     methods: {
+        handleTab(index) {
+            this.activeIndex = index;
+        },
         formatTime() {
             setInterval(() => {
                 const date = new Date()
@@ -238,13 +235,13 @@ export default {
             }
             var option = {
                 backgroundColor: '#111111',
-                legend: {
-                    data: ['日K', 'MA5', 'MA10'],
-                    inactiveColor: '#777',
-                    textStyle: {
-                        color: '#fff'
-                    }
-                },
+                // legend: {
+                //     data: ['日K', 'MA5', 'MA10'],
+                //     inactiveColor: '#777',
+                //     textStyle: {
+                //         color: '#fff'
+                //     }
+                // },
                 tooltip: {
                     trigger: 'item',
                     axisPointer: {
@@ -288,6 +285,9 @@ export default {
                     bottom: 80
                 },
                 animation: false,
+                toolbox: {
+                    show: false
+                },
                 series: [
                     {
                         type: 'candlestick',
@@ -313,30 +313,6 @@ export default {
                                     return param.name.split('，').join('</br>');
                                 }
                             },
-                        }
-                    },
-                    {
-                        name: 'MA5',
-                        type: 'line',
-                        data: this.calculateMA(5, data),
-                        smooth: true,
-                        showSymbol: false,
-                        lineStyle: {
-                            normal: {
-                                width: 1
-                            }
-                        }
-                    },
-                    {
-                        name: 'MA10',
-                        type: 'line',
-                        data: this.calculateMA(10, data),
-                        smooth: true,
-                        showSymbol: false,
-                        lineStyle: {
-                            normal: {
-                                width: 1
-                            }
                         }
                     }
                 ],
@@ -432,6 +408,7 @@ export default {
                 item.push(data.low);
                 item.push(data.high);
                 that.kData.push(item);
+                // that.noticeList = [];
                 for (var i = 0; i < that.timeList.length; i++) {
                     for (var j = 0; j < that.kData.length; j++) {
                         if (that.timeList[i].timestamp === that.kData[j][0]) {
@@ -483,10 +460,12 @@ export default {
         handleTimeChange(value) {
             this.timeStatus = value;
             this.kData = [];
+            this.noticeList = [];
             this.updateIK();
         },
         handleRateChange(value) {
             this.kData = [];
+            this.noticeList = [];
             this.rateStatus = value;
             this.updateIK();
         },
@@ -526,6 +505,10 @@ export default {
         BasicLoading
     },
     mounted() {
+        const wrapHeight = document.getElementById('chartsWrap').offsetHeight - 40;
+        const wrapWidth = document.getElementById('chartsWrap').offsetWidth - 50;
+        document.getElementById('main').style.height = `${wrapHeight}px`;
+        document.getElementById('main').style.width = `${wrapWidth}px`;
         this.initCharts();
         setInterval(() => {
             this.myChart.setOption(this.formateData());
@@ -577,6 +560,8 @@ export default {
         border: 1px solid #E9E9E9!important;
         color: #333333!important;
         line-height: 20px!important;
+        font-size: 12px!important;
+        line-height: 18px!important;
     }
     .el-card__body{
         padding: 10px!important;
@@ -608,24 +593,42 @@ export default {
         @include flex-box;
         flex-direction: column;
     }
-    #main{
-        margin: 0 auto;
-    }
     .header{
-        background: #212943;
+        background: #1E1D2E;
         height: 50px;
         width: 100%;
-        >div{
-            height: 50px;
-            width: 50px;
-            background: #2A3354;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            img{
-                width: 20px;
-                height: auto;
-                vertical-align: middle;
+        padding: 0 20px;
+        @include box-sizing(border-box);
+        ul{
+            @include flex-box;
+            flex-direction: row;
+            height: 48px;
+            li{
+                padding: 0 22px;
+                height: 46px;
+                line-height: 46px;
+                font-size:14px;
+                font-weight:400;
+                padding-bottom: 2px;
+                cursor: pointer;
+                &.active{
+                    background:rgba(55,62,97,1);
+                    font-weight:bold;
+                    color:rgba(255,255,255,1);
+                    box-shadow: 0px 10px 0px 0px #F25C62;
+                    position: relative;
+                    &:after{
+                        position: absolute;
+                        content: '';
+                        width: 17px;
+                        height: 14px;
+                        background: url('../assets/images/arrow.svg') no-repeat center;
+                        transform: translateX(-50%);
+                        left: 50%;
+                        top: -8px;
+                        background-size: contain;
+                    }
+                }
             }
         }
     }
@@ -639,10 +642,18 @@ export default {
         height: 100%;
         overflow: hidden;
         .charts-container{
+            flex: 1;
             @include flex-box;
             flex-direction: column;
             overflow: hidden;
             .charts-controls{
+                background: #1E1D2E;
+                .rate-title{
+                    color: #FECC16;
+                    font-size:14px;
+                    padding: 10px 0 0 10px;
+                    @include box-sizing(border-box);
+                }
                 height: 188px;
                 margin-top: 10px;
                 @include box-sizing(border-box);
@@ -652,8 +663,7 @@ export default {
                     flex-direction: row;
                     justify-content: space-between;
                     li{
-                        width: calc(33.33% - 7px);
-                        background: #1E1D2E;
+                        flex: 1;
                         height: 100%;
                         padding: 10px;
                         @include box-sizing(border-box);
@@ -664,6 +674,9 @@ export default {
                 flex: 1;
                 -webkit-box-flex: 1;
                 background: #111111;
+                overflow: hidden;
+                padding: 20px 0;
+                @include box-sizing(border-box);
                 .notice{
                     display: flex;
                     flex-direction: row;
@@ -689,8 +702,9 @@ export default {
         }
         .time-line-container{
             position: relative;
-            flex: 1;
-            -webkit-box-flex: 1;
+            width: 500px;
+            // flex: 1;
+            // -webkit-box-flex: 1;
             min-width: 400px;
             margin-left: 10px;
             @include flex-box;
@@ -718,6 +732,9 @@ export default {
                 overflow-y: auto;
             }
         }
+    }
+    .common-bg-box{
+        // background: #1E1D2E;
     }
     .li-item-top{
         border-bottom: 1px dashed #373E61;
