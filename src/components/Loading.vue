@@ -54,7 +54,7 @@ export default {
     top: 0;
     left: 0;
     &.light {
-        background: #212943;
+        background: #222222;
         .loader {
             .ball-beat  > div {
                 background: #1875F0;

@@ -175,7 +175,7 @@ export default {
             ],
             moneyValue: 'EUR/USD',
             myChart: '',
-            baseUrl: 'ws:0dc55c5c.ngrok.io',
+            baseUrl: 'ws:9f7028ea.ngrok.io',
             rateStatus: 'EUR/USD',
             timeStatus: '_1_min',
             currentTime: '',
@@ -237,7 +237,7 @@ export default {
                 });
             }
             var option = {
-                backgroundColor: '#212943',
+                backgroundColor: '#111111',
                 legend: {
                     data: ['日K', 'MA5', 'MA10'],
                     inactiveColor: '#777',
@@ -302,8 +302,8 @@ export default {
                             }
                         },
                         markPoint: {
-                            // symbol: 'path://M8.88888889,7.14995057 L9.44444444,7.14995057 C9.75126931,7.14995057 10,7.39868126 10,7.70550612 L10,8.24997528 C10,8.85750216 9.50750216,9.35 8.89997528,9.35 L1.10002472,9.35 C0.492497842,9.35 7.44005844e-17,8.85750216 0,8.24997528 L0,7.70550612 C-3.75752084e-17,7.39868126 0.248730695,7.14995057 0.555555556,7.14995057 L1.11132333,7.14995057 L1.11132333,4.98878278 C1.11132333,2.84106736 2.85239068,1.1 5.00010611,1.1 C7.14782153,1.1 8.88888889,2.84106736 8.88888889,4.98878278 L8.88888889,5.50766348 L8.88888889,7.14995057 Z',
-                            symbolSize: 50,
+                            // symbol: 'path://M10.8888889,7.14995057 L11.4444444,7.14995057 C11.7512693,7.14995057 12,7.39868126 12,7.70550612 L12,8.24997528 C12,8.85750216 11.5075022,9.35 10.8999753,9.35 L3.10002472,9.35 C2.49249784,9.35 2,8.85750216 2,8.24997528 L2,7.70550612 C2,7.39868126 2.24873069,7.14995057 2.55555556,7.14995057 L3.11132333,7.14995057 L3.11132333,4.98878278 C3.11132333,2.84106736 4.85239068,1.1 7.00010611,1.1 C9.14782153,1.1 10.8888889,2.84106736 10.8888889,4.98878278 L10.8888889,5.50766348 L10.8888889,7.14995057 Z',
+                            symbolSize: 40,
                             label: {
                                 show:true
                             },
@@ -544,51 +544,59 @@ export default {
     // elemnet reset
     .el-input__inner{
        background: none;
-       border:1px solid rgba(55,62,97,1)!important;
-       color: #B0B9E4!important;
+       border:1px solid #333333!important;
+       color: #FFFFFF!important;
        width: 130px!important;
-       background-color: #2D365A!important;
+       background-color: #333333!important;
     }
     .el-select .el-input.is-focus .el-input__inner{
-        border-color: rgba(55,62,97,1)!important;
+        border-color: #333333!important;
     }
     .el-select .el-input__inner:focus{
-        border-color: rgba(55,62,97,1)!important;
+        border-color: #333333!important;
     }
     .el-input__inner:hover{
-        border-color: rgba(55,62,97,1)!important;
+        border-color: #333333!important;
     }
     .el-select-dropdown{
-        background: #373E61!important;
+        background: #222222!important;
         border: none!important;
     }
     .el-popper[x-placement^=bottom] .popper__arrow{
         display: none!important;
     }
     .el-select-dropdown__item{
-        color: #B0B9E4!important;
+        color: #868686!important;
     }
     .el-select-dropdown__item.hover, .el-select-dropdown__item:hover{
-        background-color: #373E61!important;
+        background-color: #222222!important;
     }
     .el-card{
-        background: #2A3354!important;
+        background: #E9E9E9!important;
         border-radius:2px!important;
-        border: 1px solid #2A3354!important;
-        color: #B0B9E4!important;
+        border: 1px solid #E9E9E9!important;
+        color: #333333!important;
         line-height: 20px!important;
     }
+    .el-card__body{
+        padding: 10px!important;
+    }
     .el-timeline-item__tail{
-        border-left: 2px dashed #676E8E!important;
+        border-left: 1px dashed #666666!important;
     }
     .el-timeline-item__timestamp{
-        color: #676E8E!important;
+        color: #BABABA!important;
         font-size: 12px!important;
     }
     .el-timeline-item__node{
-        background: #676E8E!important;
+        background: #999999!important;
     }
     .el-timeline-item__node--normal{
+        left: 0!important;
+        width: 10px!important;
+        height: 10px!important;
+    }
+    .k-time-line li:first-child .el-timeline-item__node--normal{
         left: -5px!important;
         width: 20px!important;
         height: 20px!important;
@@ -596,9 +604,12 @@ export default {
     .charts {
         width: 100%;
         height: 100vh;
-        background: #151934;
+        background: #000;
         @include flex-box;
         flex-direction: column;
+    }
+    #main{
+        margin: 0 auto;
     }
     .header{
         background: #212943;
@@ -642,7 +653,7 @@ export default {
                     justify-content: space-between;
                     li{
                         width: calc(33.33% - 7px);
-                        background: #212943;
+                        background: #1E1D2E;
                         height: 100%;
                         padding: 10px;
                         @include box-sizing(border-box);
@@ -652,7 +663,7 @@ export default {
             .charts-wrap{
                 flex: 1;
                 -webkit-box-flex: 1;
-                background: #212943;
+                background: #111111;
                 .notice{
                     display: flex;
                     flex-direction: row;
@@ -685,7 +696,7 @@ export default {
             @include flex-box;
             flex-direction: column;
             .top-title{
-                background: #212943;
+                background: #222222;
                 @include box-sizing(border-box);
                 padding: 20px;
                 font-size:14px;
@@ -694,12 +705,12 @@ export default {
                     display: inline-block;
                     margin-right: 10px;
                     &:first-child{
-                        color: #676E8E;
+                        color: #999999;
                     }
                 }
             }
             .k-time-line{
-                background: #212943;
+                background: #222222;
                 padding: 0 20px;
                 @include box-sizing(border-box);
                 flex: 1;
@@ -765,7 +776,7 @@ export default {
         @include box-sizing(border-box);
         flex-direction: row;
         justify-content: space-between;
-        background: #212943;
+        background: #111111;
         padding: 20px 30px;
         .head-left{
             flex: 1;
@@ -805,7 +816,7 @@ export default {
         padding-top: 10px;
         ul{
             height: 100%;
-            background: #212943;
+            background:rgba(38,24,31,1);
             padding: 10px;
             @include box-sizing(border-box);
             p{
@@ -815,14 +826,14 @@ export default {
             li{
                 font-size: 12px;
                 margin-top: 10px;
-                background:rgba(42,51,84,1);
+                background:rgba(66,38,38,1);
                 border-radius:2px;
                 padding: 14px 10px;
                 @include box-sizing(border-box);
                 span{
                     display: inline-block;
                     &:first-child{
-                        color:rgba(176,185,228,1);
+                        color:#E4B0B0;
                         width: 80px;
                     }
                     &:nth-child(2){
@@ -830,7 +841,7 @@ export default {
                         margin-right: 10px;
                     }
                     &:last-child{
-                        color: #B0B9E4;
+                        color: #E4B0B0;
                     }
                 }
             }
