@@ -167,7 +167,7 @@ export default {
             ],
             moneyValue: 'EUR/USD',
             myChart: '',
-            baseUrl: 'ws:8ae5ab05.ngrok.io',
+            baseUrl: 'ws:6180100a.ngrok.io',
             rateStatus: 'EUR/USD',
             timeStatus: '_1_min',
             currentTime: '',
@@ -182,6 +182,7 @@ export default {
             predictList: [],
             navList: ['财经事件监控', '产品说明', '原理说明'],
             activeIndex: 0,
+            reverseStatus: true
         }
     },
     created() {
@@ -421,7 +422,7 @@ export default {
                                     coord: temp1,
                                     value: '涨',
                                     itemStyle: {
-                                        normal: {color: '#F25C62'}
+                                        normal: {color: that.reverseStatus ? '#1AC998': '#F25C62'}
                                     }
                                 }) 
                             }
@@ -434,7 +435,7 @@ export default {
                                     coord: temp1,
                                     value: '跌',
                                     itemStyle: {
-                                        normal: {color: '#1AC998'}
+                                        normal: {color: that.reverseStatus ? '#F25C62': '#1AC998'}
                                     }
                                 }) 
                             }
@@ -464,6 +465,11 @@ export default {
             this.updateIK();
         },
         handleRateChange(value) {
+            if (value === 'EUR/USD' || value === "GBP/USD" || value === 'AUD/USD') {
+                this.reverseStatus = true;
+            } else {
+                this.reverseStatus = false;
+            }
             this.kData = [];
             this.noticeList = [];
             this.rateStatus = value;
