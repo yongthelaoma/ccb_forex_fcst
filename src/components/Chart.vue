@@ -89,9 +89,10 @@
                 <el-timeline class="k-time-line">
                     <el-timeline-item placement="top" v-for="(item, index) in timeList"
                     :key="index"
+                    :color="item.color"
                     :timestamp="item.timestamp">
                         <el-card>
-                            <p>{{item.txt}}</p>
+                            <p>【{{item.label}}】{{item.txt}}</p>
                         </el-card>
                     </el-timeline-item>
                 </el-timeline>
@@ -355,6 +356,7 @@ export default {
         updateNews() {
             // 打开新的websocket 连接
             const ws = new WebSocket(`${this.baseUrl}/ws/live`);
+            const that = this;
             ws.onopen = () => {
                 this.timelineStatus = true;
             }
@@ -369,7 +371,16 @@ export default {
                 this.newsStatus = true;
                 this.timelineStatus = false;
                 if (JSON.parse(res.data).timeList instanceof Array) {
-                    this.timeList = JSON.parse(res.data).timeList;
+                    that.timeList = JSON.parse(res.data).timeList;
+                    that.timeList.map((item) => {
+                        if (item.label === '看涨') {
+                            that.reverseStatus === true ? item.label = '看跌' : item.label = '看涨'
+                            that.reverseStatus === true ? item.color = '#1AC998' : item.color = '#F25C62';
+                        } else if (item.label === '看跌') {
+                            that.reverseStatus === true ? item.label = '看涨' : item.label = '看跌'
+                            that.reverseStatus === true ? item.color = '#F25C62' : item.color = '#1AC998';
+                        }
+                    })
                 }
             }
         },
@@ -473,6 +484,7 @@ export default {
             this.kData = [];
             this.noticeList = [];
             this.rateStatus = value;
+            this.updateNews();
             this.updateIK();
         },
         handleVerbUpdate(rate, item) {
@@ -580,7 +592,7 @@ export default {
         font-size: 12px!important;
     }
     .el-timeline-item__node{
-        background: #999999!important;
+        background: #999999;
     }
     .el-timeline-item__node--normal{
         left: 0!important;
