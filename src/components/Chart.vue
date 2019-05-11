@@ -420,7 +420,7 @@ export default {
                                 that.noticeList.push({
                                     name: that.timeList[i].txt.substring(0,20),
                                     coord: temp1,
-                                    value: '涨',
+                                    value: that.reverseStatus ? '跌' : '涨',
                                     itemStyle: {
                                         normal: {color: that.reverseStatus ? '#1AC998': '#F25C62'}
                                     }
@@ -433,7 +433,7 @@ export default {
                                 that.noticeList.push({
                                     name: that.timeList[i].txt.substring(0,20),
                                     coord: temp1,
-                                    value: '跌',
+                                    value: that.reverseStatus ? '涨' : '跌',
                                     itemStyle: {
                                         normal: {color: that.reverseStatus ? '#F25C62': '#1AC998'}
                                     }
