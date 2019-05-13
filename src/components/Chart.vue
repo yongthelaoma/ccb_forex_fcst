@@ -503,8 +503,8 @@ export default {
             }
         },
         handleTimeChange(value) {
-            this.wsNews.onclose = () => {};
-            this.wsK.onclose = () => {};
+            this.wsNews.close()
+            this.wsK.close()
             // this.area.scrollTop = 0;
             // this.handleMouseenter();
             if (value === '_5_min') {
@@ -521,8 +521,8 @@ export default {
             this.updateNews();
         },
         handleRateChange(value) {
-            this.wsNews.onclose = () => {};
-            this.wsK.onclose = () => {};
+            this.wsNews.close()
+            this.wsK.close()
             // this.area.scrollTop = 0;
             // this.handleMouseenter();
             if (value === 'EUR/USD' || value === "GBP/USD" || value === 'AUD/USD') {
