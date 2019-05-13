@@ -81,21 +81,23 @@
                 </div>
             </div>
             <div class="time-line-container">
-                <basic-loading v-show="timelineStatus"></basic-loading>
+                <!-- <basic-loading v-show="timelineStatus"></basic-loading> -->
                 <div class="top-title">
                     <span>资讯信息</span>
                     <span>{{currentTime}}</span>
                 </div>
-                <el-timeline class="k-time-line">
-                    <el-timeline-item placement="top" v-for="(item, index) in timeList"
-                    :key="index"
-                    :color="item.color"
-                    :timestamp="item.timestamp">
-                        <el-card>
-                            <p>【{{item.label}}】{{item.txt}}</p>
-                        </el-card>
-                    </el-timeline-item>
-                </el-timeline>
+                <div class="k-time-line" id="kTimeLine" @mouseenter="handleMouseenter" @mouseleave="handleLeave">
+                    <el-timeline id="scrollBox">
+                        <el-timeline-item placement="top" v-for="(item, index) in timeList"
+                        :key="index"
+                        :color="item.color"
+                        :timestamp="item.timestamp">
+                            <el-card>
+                                <p>【{{item.label}}】{{item.txt}}</p>
+                            </el-card>
+                        </el-timeline-item>
+                    </el-timeline>
+                </div>
                  <div class="predict">
                     <ul>
                         <p>预测统计</p>
@@ -124,6 +126,7 @@
 
 <script>
 import BasicLoading from './Loading';
+import moment from 'moment'
 
 const echarts = require('echarts');
 export default {
@@ -168,7 +171,7 @@ export default {
             ],
             moneyValue: 'EUR/USD',
             myChart: '',
-            baseUrl: 'ws:6180100a.ngrok.io',
+            baseUrl: 'ws:b45fe909.ngrok.io',
             rateStatus: 'EUR/USD',
             timeStatus: '_1_min',
             currentTime: '',
@@ -183,7 +186,16 @@ export default {
             predictList: [],
             navList: ['财经事件监控', '产品说明', '原理说明'],
             activeIndex: 0,
-            reverseStatus: true
+            reverseStatus: true,
+            timeOut: '',
+            area: '',
+            maxHeight: 0,
+            speed: 50,
+            delay: 0,
+            containerHeight: 0,
+            scrollStatus: false,
+            //  表示当前是5分钟一根k线
+            timeGape: 5,
         }
     },
     created() {
@@ -195,16 +207,37 @@ export default {
         this.updateIK();
     },
     methods: {
+        reGroup(date) {
+            const times = new Date(date);
+            // 转化成毫秒
+            let seconeds = times.getTime();
+            // 2、获取当前的分钟
+            const minutes = times.getMinutes();
+            // 将当前时间归到对应的时间段下
+            if (minutes % this.timeGape !== 0) {
+                let addMinutes = this.timeGape - minutes % this.timeGape;
+                seconeds = seconeds + addMinutes * 60 * 1000;
+                const newDate = new Date(seconeds);
+                const year = newDate.getFullYear();
+                const month = newDate.getMonth() + 1 >= 10 ? newDate.getMonth() + 1 : `0${newDate.getMonth() + 1}`;
+                const dd =  newDate.getDate() >= 10 ? newDate.getDate() : `0${newDate.getDate()}`;
+                const hh = newDate.getHours() >= 10 ? newDate.getHours() : `0${newDate.getHours()}`;
+                const mm = newDate.getMinutes() >= 10 ? newDate.getMinutes() : `0${newDate.getMinutes()}`;
+                return `${year}-${month}-${dd} ${hh}:${mm}:00`;
+            } else {
+                return date;
+            }
+        },
         handleTab(index) {
             this.activeIndex = index;
         },
-        formatTime() {
+        formatTime(date, fmt) {
             setInterval(() => {
                 const date = new Date()
-                const month = date.getMonth() + 1 > 10 ? date.getMonth() + 1 : `0${date.getMonth() + 1}`;
-                const ss = date.getSeconds() > 10 ? date.getSeconds() : `0${date.getSeconds()}`;
+                const month = date.getMonth() + 1 >= 10 ? date.getMonth() + 1 : `0${date.getMonth() + 1}`;
+                const ss = date.getSeconds() >= 10 ? date.getSeconds() : `0${date.getSeconds()}`;
                 this.currentTime = `${month}月${date.getDate()}日 ${date.getHours()}:${date.getMinutes()}:${ss}`
-            }, 1000);
+            }, 1000)
         },
         calculateMA() {
             function calculateMA(dayCount, data) {
@@ -368,11 +401,27 @@ export default {
                 this.timelineStatus = false;
             }
             ws.onmessage = (res) => {
+                // 更新新闻时，清空定时器
+                if (this.scrollStatus) {
+                    this.area.scrollTop = 0;
+                    clearTimeout(this.timeOut);
+                    clearInterval(this.time);
+                }
                 this.newsStatus = true;
                 this.timelineStatus = false;
                 if (JSON.parse(res.data).timeList instanceof Array) {
                     that.timeList = JSON.parse(res.data).timeList;
+                    if (that.timeList.length > 0 && that.scrollStatus) {
+                        that.maxHeight = document.getElementById("scrollBox").offsetHeight;
+                        if (that.maxHeight > 0) {
+                            that.scrollStatus = false;
+                            that.timeOut = setTimeout(() => {
+                                that.starMove();
+                            }, that.delay)
+                        }
+                    }
                     that.timeList.map((item) => {
+                        // item.fmtime = this.reGroup(item.timestamp);
                         if (item.label === '看涨') {
                             that.reverseStatus === true ? item.label = '看跌' : item.label = '看涨'
                             that.reverseStatus === true ? item.color = '#1AC998' : item.color = '#F25C62';
@@ -384,23 +433,6 @@ export default {
                 }
             }
         },
-        // transformArr(orig) {
-        //     var newArr = [],
-        //         types = {},
-        //         i, j, cur;
-        //     for (i = 0, j = orig.length; i < j; i++) {
-        //         cur = orig[i];
-        //         if (!(cur.date in types)) {
-        //             types[cur.date] = {type: cur.date, news: []};
-        //         }
-        //         types[cur.date].news.push(cur);
-        //         if (newArr.indexOf(types[cur.date]) === -1) {
-        //             newArr.push(types[cur.date]);
-        //         }
-        //     }
-        //     console.dir(newArr);
-        //     return newArr;
-        // },
         // 获取k线数据
         updateIK() {
             const rate = this.moneyValue.split('/');
@@ -420,7 +452,7 @@ export default {
                 item.push(data.low);
                 item.push(data.high);
                 that.kData.push(item);
-                // that.noticeList = [];
+                that.noticeList = [];
                 for (var i = 0; i < that.timeList.length; i++) {
                     for (var j = 0; j < that.kData.length; j++) {
                         if (that.timeList[i].timestamp === that.kData[j][0]) {
@@ -431,11 +463,20 @@ export default {
                                 that.noticeList.push({
                                     name: that.timeList[i].txt.substring(0,20),
                                     coord: temp1,
-                                    value: that.reverseStatus ? '跌' : '涨',
+                                    value: '涨',
                                     itemStyle: {
-                                        normal: {color: that.reverseStatus ? '#1AC998': '#F25C62'}
+                                        normal: {color: that.timeList[i].color}
                                     }
                                 }) 
+
+                                // that.noticeList.push({
+                                //     name: that.timeList[i].txt.substring(0,20),
+                                //     coord: temp1,
+                                //     value: that.reverseStatus === true ? '跌' : '涨',
+                                //     itemStyle: {
+                                //         normal: {color: that.reverseStatus === true ? '#1AC998': '#F25C62'}
+                                //     }
+                                // }) 
                             }
                             if (that.timeList[i].label === '看跌') {
                                 const temp1 = [];
@@ -444,11 +485,19 @@ export default {
                                 that.noticeList.push({
                                     name: that.timeList[i].txt.substring(0,20),
                                     coord: temp1,
-                                    value: that.reverseStatus ? '涨' : '跌',
+                                    value: '跌',
                                     itemStyle: {
-                                        normal: {color: that.reverseStatus ? '#F25C62': '#1AC998'}
+                                        normal: {color: that.timeList[i].color}
                                     }
-                                }) 
+                                })
+                                // that.noticeList.push({
+                                //     name: that.timeList[i].txt.substring(0,20),
+                                //     coord: temp1,
+                                //     value: that.reverseStatus === true ? '涨' : '跌',
+                                //     itemStyle: {
+                                //         normal: {color: that.reverseStatus ? '#F25C62': '#1AC998'}
+                                //     }
+                                // })
                             }
                         }
                     }
@@ -516,6 +565,34 @@ export default {
                     this.predictList = data;
                 }
             }
+        },
+        handleMouseenter() {
+            clearTimeout(this.timeOut);
+            clearInterval(this.time);
+        },
+        handleLeave() {
+            this.timeOut = setTimeout(() => {
+                this.starMove();
+            }, this.delay)
+        },
+        scrollUp() {
+            if(this.area.scrollTop === 0){
+                clearInterval(this.time);
+                setTimeout(() => {
+                    this.starMove();
+                }, this.delay)
+            }else{
+                this.area.scrollTop++;
+                if(this.area.scrollTop >= this.maxHeight - this.containerHeight){
+                    this.area.scrollTop = 0;
+                }
+            }
+        },
+        starMove() {
+            this.area.scrollTop++;
+            this.time = setInterval(() => {
+                this.scrollUp();
+            }, this.speed)
         }
 
     },
@@ -536,6 +613,15 @@ export default {
                 this.myChart.setOption(option);
             }
         }, 1000)
+        // 滚动动画效果实现
+        this.area = document.getElementById("kTimeLine");
+        this.maxHeight = document.getElementById("scrollBox").offsetHeight;
+        this.containerHeight = document.getElementById('kTimeLine').offsetHeight;
+        this.area.scrollTop = 0;
+        this.timeOut = setTimeout(() => {
+            this.scrollStatus = true;
+            this.maxHeight > 0 && this.starMove();
+        }, this.delay)
     }
 }
 </script>
