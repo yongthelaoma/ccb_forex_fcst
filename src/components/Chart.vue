@@ -533,7 +533,7 @@ export default {
                                     normal: { color }
                                 }
                             }
-                            if (that.kData[j+1][2] - that.kData[j][2] > 0) {
+                            if (that.kData[j+1][2] - that.kData[j][2] > 0.0005) {
                                 // 当前预测正确
                                 newBubble.itemStyle.normal.color = that.timeList[i].color
                                 if (that.timeList[i].label === '看涨') {
