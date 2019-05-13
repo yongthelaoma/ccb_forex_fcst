@@ -195,7 +195,9 @@ export default {
             containerHeight: 0,
             scrollStatus: false,
             //  表示当前是5分钟一根k线
-            timeGape: 5,
+            timeGape: 1,
+            wsNews: '',
+            wsK: ''
         }
     },
     created() {
@@ -388,19 +390,19 @@ export default {
         // 获取实时新闻
         updateNews() {
             // 打开新的websocket 连接
-            const ws = new WebSocket(`${this.baseUrl}/ws/live`);
+            this.wsNews = new WebSocket(`${this.baseUrl}/ws/live`);
             const that = this;
-            ws.onopen = () => {
+            this.wsNews.onopen = () => {
                 this.timelineStatus = true;
             }
-            ws.onerror = (error) => {
+            this.wsNews.onerror = (error) => {
                 this.$message.error(error);
                 this.timelineStatus = false;
             }
-            ws.onclose = () => {
+            this.wsNews.onclose = () => {
                 this.timelineStatus = false;
             }
-            ws.onmessage = (res) => {
+            this.wsNews.onmessage = (res) => {
                 // 更新新闻时，清空定时器
                 if (this.scrollStatus) {
                     this.area.scrollTop = 0;
@@ -421,7 +423,7 @@ export default {
                         }
                     }
                     that.timeList.map((item) => {
-                        // item.fmtime = this.reGroup(item.timestamp);
+                        item.fmtime = this.reGroup(item.timestamp);
                         if (item.label === '看涨') {
                             that.reverseStatus === true ? item.label = '看跌' : item.label = '看涨'
                             that.reverseStatus === true ? item.color = '#1AC998' : item.color = '#F25C62';
@@ -438,12 +440,12 @@ export default {
             const rate = this.moneyValue.split('/');
             const time = this.timeStatus;
             const url = `${this.baseUrl}/ws/historical?symbol=${rate[0]}&currency=${rate[1]}&endDateTime=&duration=3600&durationUnit=SECOND&barSize=${time}&keepUpToDate=true`;
-            const ws = new WebSocket(url);
+            this.wsK = new WebSocket(url);
             const that = this;
-            ws.onerror = (error) => {
+            this.wsK.onerror = (error) => {
                 this.$message.error(error);
             }
-            ws.onmessage = (res) => {
+            this.wsK.onmessage = (res) => {
                 const data = JSON.parse(res.data);
                 const item = [];
                 item.push(data.time);
@@ -455,10 +457,10 @@ export default {
                 that.noticeList = [];
                 for (var i = 0; i < that.timeList.length; i++) {
                     for (var j = 0; j < that.kData.length; j++) {
-                        if (that.timeList[i].timestamp === that.kData[j][0]) {
+                        if (that.timeList[i].fmtime === that.kData[j][0]) {
                             if (that.timeList[i].label === '看涨') {
                                 const temp1 = [];
-                                temp1.push(that.timeList[i].timestamp);
+                                temp1.push(that.timeList[i].fmtime);
                                 temp1.push(that.kData[j][2]);
                                 that.noticeList.push({
                                     name: that.timeList[i].txt.substring(0,20),
@@ -468,19 +470,9 @@ export default {
                                         normal: {color: that.timeList[i].color}
                                     }
                                 }) 
-
-                                // that.noticeList.push({
-                                //     name: that.timeList[i].txt.substring(0,20),
-                                //     coord: temp1,
-                                //     value: that.reverseStatus === true ? '跌' : '涨',
-                                //     itemStyle: {
-                                //         normal: {color: that.reverseStatus === true ? '#1AC998': '#F25C62'}
-                                //     }
-                                // }) 
-                            }
-                            if (that.timeList[i].label === '看跌') {
+                            } else if (that.timeList[i].label === '看跌') {
                                 const temp1 = [];
-                                temp1.push(that.timeList[i].timestamp);
+                                temp1.push(that.timeList[i].fmtime);
                                 temp1.push(that.kData[j][2]);
                                 that.noticeList.push({
                                     name: that.timeList[i].txt.substring(0,20),
@@ -490,14 +482,6 @@ export default {
                                         normal: {color: that.timeList[i].color}
                                     }
                                 })
-                                // that.noticeList.push({
-                                //     name: that.timeList[i].txt.substring(0,20),
-                                //     coord: temp1,
-                                //     value: that.reverseStatus === true ? '涨' : '跌',
-                                //     itemStyle: {
-                                //         normal: {color: that.reverseStatus ? '#F25C62': '#1AC998'}
-                                //     }
-                                // })
                             }
                         }
                     }
@@ -519,12 +503,28 @@ export default {
             }
         },
         handleTimeChange(value) {
+            this.wsNews.onclose = () => {};
+            this.wsK.onclose = () => {};
+            // this.area.scrollTop = 0;
+            // this.handleMouseenter();
+            if (value === '_5_min') {
+                this.timeGape = 5;
+            } else if (value === '_10_min') {
+                this.timeGape = 10;
+            } else {
+                this.timeGape = 1;
+            }
             this.timeStatus = value;
             this.kData = [];
             this.noticeList = [];
             this.updateIK();
+            this.updateNews();
         },
         handleRateChange(value) {
+            this.wsNews.onclose = () => {};
+            this.wsK.onclose = () => {};
+            // this.area.scrollTop = 0;
+            // this.handleMouseenter();
             if (value === 'EUR/USD' || value === "GBP/USD" || value === 'AUD/USD') {
                 this.reverseStatus = true;
             } else {
