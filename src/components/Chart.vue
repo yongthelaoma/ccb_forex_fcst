@@ -32,6 +32,19 @@
                         </el-select>
                     </div>
                 </div>
+                <div class="indicate-box">
+                    <ul class="indicate">
+                        <li>
+                            <img src="../assets/images/predict-up.png">涨
+                        </li>
+                        <li>
+                            <img src="../assets/images/predict-down.png">跌
+                        </li>
+                        <li>
+                            <img src="../assets/images/predict-wrong.png">错
+                        </li>
+                    </ul>
+                </div>
                 <div class="charts-wrap" id="chartsWrap">
                     <div id="main" style="width: 550px;height:300px;"></div>
                 </div>
@@ -93,7 +106,10 @@
                         :color="item.color"
                         :timestamp="item.timestamp">
                             <el-card>
-                                <p>【{{item.label}}】{{item.txt}}</p>
+                                <p>
+                                <i v-if="item.label === '横盘'" class="el-icon-caret-right">【{{item.label}}】</i>
+                                <i v-if="item.label !== '横盘'" :class="{'el-icon-caret-top': item.label === '看涨', 'el-icon-caret-bottom': item.label === '看跌'}">【{{item.label}}】</i>
+                                {{item.txt}}</p>
                             </el-card>
                         </el-timeline-item>
                     </el-timeline>
@@ -413,6 +429,38 @@ export default {
                 this.timelineStatus = false;
                 if (JSON.parse(res.data).timeList instanceof Array) {
                     that.timeList = JSON.parse(res.data).timeList;
+                    // that.timeList = [
+                    //     {
+                    //         label: "看涨",
+                    //         score: "56.4158082008",
+                    //         timestamp: "2019-05-13 16:42:00",
+                    //         txt: "日本政府下调称，基于同步指标的下调来看，日本经济在恶化，此为2013年1月来首",
+                    //     },
+                    //     {
+                    //         label: "看跌",
+                    //         score: "56.4158082008",
+                    //         timestamp: "2019-05-13 16:34:00",
+                    //         txt: "日本政府下调称，基于同步指标的下调来看，日本经济在恶化，此为2013年1月来首",
+                    //     },
+                    //     {
+                    //         label: "横盘",
+                    //         score: "56.4158082008",
+                    //         timestamp: "2019-05-13 16:20:00",
+                    //         txt: "日本政府下调称，基于同步指标的下调来看，日本经济在恶化，此为2013年1月来首",
+                    //     },
+                    //     {
+                    //         label: "看涨",
+                    //         score: "56.4158082008",
+                    //         timestamp: "2019-05-13 16:50:00",
+                    //         txt: "分数低",
+                    //     },
+                    //     {
+                    //         label: "看涨",
+                    //         score: "57.4158082008",
+                    //         timestamp: "2019-05-13 16:50:00",
+                    //         txt: "分数高",
+                    //     }
+                    // ]
                     if (that.timeList.length > 0 && that.scrollStatus) {
                         that.maxHeight = document.getElementById("scrollBox").offsetHeight;
                         if (that.maxHeight > 0) {
@@ -432,6 +480,20 @@ export default {
                             that.reverseStatus === true ? item.color = '#F25C62' : item.color = '#1AC998';
                         }
                     })
+                    
+                    const newData = [];
+                    const timeAsse = [];
+                    for (let i = 0; i < that.timeList.length; i++) {
+                        if (timeAsse.indexOf(that.timeList[i].fmtime) === -1) {
+                            newData.push(that.timeList[i]);
+                            timeAsse.push(that.timeList[i].fmtime);
+                        } else {
+                            if (that.timeList[timeAsse.indexOf(that.timeList[i].fmtime)].score < that.timeList[i].score) {
+                                newData[timeAsse.indexOf(that.timeList[i].fmtime)] = that.timeList[i];
+                            }
+                        }
+                    }
+                    that.timeList = newData;
                 }
             }
         },
@@ -458,30 +520,39 @@ export default {
                 for (var i = 0; i < that.timeList.length; i++) {
                     for (var j = 0; j < that.kData.length; j++) {
                         if (that.timeList[i].fmtime === that.kData[j][0]) {
-                            if (that.timeList[i].label === '看涨') {
-                                const temp1 = [];
-                                temp1.push(that.timeList[i].fmtime);
-                                temp1.push(that.kData[j][2]);
-                                that.noticeList.push({
-                                    name: that.timeList[i].txt.substring(0,20),
-                                    coord: temp1,
-                                    value: '涨',
-                                    itemStyle: {
-                                        normal: {color: that.timeList[i].color}
-                                    }
-                                }) 
-                            } else if (that.timeList[i].label === '看跌') {
-                                const temp1 = [];
-                                temp1.push(that.timeList[i].fmtime);
-                                temp1.push(that.kData[j][2]);
-                                that.noticeList.push({
-                                    name: that.timeList[i].txt.substring(0,20),
-                                    coord: temp1,
-                                    value: '跌',
-                                    itemStyle: {
-                                        normal: {color: that.timeList[i].color}
-                                    }
-                                })
+                            const temp = [];
+                            temp.push(that.timeList[i].fmtime);
+                            temp.push(that.kData[j][2]);
+                            let color = '';
+                            let bubble = '';
+                            const newBubble = {
+                                name: that.timeList[i].txt.substring(0,20),
+                                coord: temp,
+                                value: bubble,
+                                itemStyle: {
+                                    normal: { color }
+                                }
+                            }
+                            if (that.kData[j+1][2] - that.kData[j][2] > 0) {
+                                // 当前预测正确
+                                newBubble.itemStyle.normal.color = that.timeList[i].color
+                                if (that.timeList[i].label === '看涨') {
+                                    newBubble.value = '涨'
+                                    that.noticeList.push(newBubble)
+                                } else if (that.timeList[i].label === '看跌') {
+                                    newBubble.value = '跌';
+                                    that.noticeList.push(newBubble)
+                                }
+                            } else {
+                                // 预测错误
+                                newBubble.itemStyle.normal.color = '#ccc';
+                                if (that.timeList[i].label === '看涨') {
+                                    newBubble.value = '涨';
+                                    that.noticeList.push(newBubble)
+                                } else if (that.timeList[i].label === '看跌') {
+                                    newBubble.value = '跌';
+                                    that.noticeList.push(newBubble)
+                                }
                             }
                         }
                     }
@@ -690,12 +761,42 @@ export default {
         width: 20px!important;
         height: 20px!important;
     }
+    .el-icon-caret-right{
+        color: #1875F0!important;
+        font-style: normal!important;
+    }
+    .el-icon-caret-top{
+        color: #EF252D!important;
+        font-style: normal!important;
+    }
+    .el-icon-caret-bottom{
+        color: #00857A!important;
+        font-style: normal!important;
+    }
     .charts {
         width: 100%;
         height: 100vh;
         background: #000;
         @include flex-box;
         flex-direction: column;
+    }
+    .indicate-box{
+        background: #111111;
+    }
+    .indicate{
+        @include flex-box;
+        align-items: center;
+        justify-content: center;
+        li{
+            img{
+                width: 14px;
+                height: 20px;
+                vertical-align: middle;
+                margin-right: 5px;
+            }
+            margin-right: 20px;
+            font-size: 12px;
+        }
     }
     .header{
         background: #1E1D2E;
@@ -708,18 +809,20 @@ export default {
             flex-direction: row;
             height: 48px;
             li{
-                padding: 0 22px;
+                padding: 0 50px;
                 height: 46px;
                 line-height: 46px;
                 font-size:14px;
                 font-weight:400;
                 padding-bottom: 2px;
                 cursor: pointer;
+                letter-spacing:5px;
                 &.active{
                     background:rgba(55,62,97,1);
                     font-weight:bold;
                     color:rgba(255,255,255,1);
                     box-shadow: 0px 10px 0px 0px #F25C62;
+                    font-family:PingFang-SC-Bold;
                     position: relative;
                     &:after{
                         position: absolute;
