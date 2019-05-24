@@ -533,27 +533,52 @@ export default {
                                     normal: { color }
                                 }
                             }
-                            if (that.kData[j+1][2] - that.kData[j][2] > 0.0005) {
-                                // 当前预测正确
-                                newBubble.itemStyle.normal.color = that.timeList[i].color
-                                if (that.timeList[i].label === '看涨') {
-                                    newBubble.value = '涨'
-                                    that.noticeList.push(newBubble)
-                                } else if (that.timeList[i].label === '看跌') {
-                                    newBubble.value = '跌';
-                                    that.noticeList.push(newBubble)
+
+                            if (that.timeList[i].label === '看涨') {
+                                newBubble.value = '涨'
+                                if (that.kData[j+1][2] - that.kData[j][2] > 0.0005) {
+                                    // 预测对了
+                                    newBubble.itemStyle.normal.color = that.timeList[i].color;
+                                    that.noticeList.push(newBubble);
+                                } else {
+                                    // 预测错了
+                                    newBubble.itemStyle.normal.color = '#ccc';
+                                    that.noticeList.push(newBubble);
                                 }
-                            } else {
-                                // 预测错误
-                                newBubble.itemStyle.normal.color = '#ccc';
-                                if (that.timeList[i].label === '看涨') {
-                                    newBubble.value = '涨';
-                                    that.noticeList.push(newBubble)
-                                } else if (that.timeList[i].label === '看跌') {
-                                    newBubble.value = '跌';
-                                    that.noticeList.push(newBubble)
+
+                            } else if (that.timeList[i].label === '看跌') {
+                                newBubble.value = '跌';
+                                if (that.kData[j+1][2] - that.kData[j][2] < -0.0005) {
+                                    // 预测对了
+                                    newBubble.itemStyle.normal.color = that.timeList[i].color;
+                                    that.noticeList.push(newBubble);
+                                } else {
+                                    // 预测错了
+                                    newBubble.itemStyle.normal.color = '#ccc';
+                                    that.noticeList.push(newBubble);
                                 }
                             }
+                            // if (that.kData[j+1][2] - that.kData[j][2] > 0.0005) {
+                            //     // 当前预测正确
+                            //     newBubble.itemStyle.normal.color = that.timeList[i].color
+                            //     if (that.timeList[i].label === '看涨') {
+                            //         newBubble.value = '涨'
+                            //         that.noticeList.push(newBubble)
+                            //     } else if (that.timeList[i].label === '看跌') {
+                            //         newBubble.value = '跌';
+                            //         that.noticeList.push(newBubble)
+                            //     }
+                            // } else {
+                            //     // 预测错误
+                            //     newBubble.itemStyle.normal.color = '#ccc';
+                            //     if (that.timeList[i].label === '看涨') {
+                            //         newBubble.value = '涨';
+                            //         that.noticeList.push(newBubble)
+                            //     } else if (that.timeList[i].label === '看跌') {
+                            //         newBubble.value = '跌';
+                            //         that.noticeList.push(newBubble)
+                            //     }
+                            // }
                         }
                     }
                 }
