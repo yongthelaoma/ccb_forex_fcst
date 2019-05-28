@@ -641,10 +641,10 @@ export default {
     },
     mounted() {
         // 动态计算画布宽高
-        const wrapHeight = document.getElementById('chartsWrap').offsetHeight - 40;
-        const wrapWidth = document.getElementById('chartsWrap').offsetWidth - 50;
-        document.getElementById('main').style.height = `${wrapHeight}px`;
-        document.getElementById('main').style.width = `${wrapWidth}px`;
+        // const wrapHeight = document.getElementById('chartsWrap').offsetHeight - 40;
+        // const wrapWidth = document.getElementById('chartsWrap').offsetWidth - 50;
+        // document.getElementById('main').style.height = `${wrapHeight}px`;
+        // document.getElementById('main').style.width = `${wrapWidth}px`;
         this.initCharts();
         setInterval(() => {
             this.myChart.setOption(this.formateData());
