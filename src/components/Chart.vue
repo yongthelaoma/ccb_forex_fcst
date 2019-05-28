@@ -99,7 +99,8 @@
                     <span>资讯信息</span>
                     <span>{{currentTime}}</span>
                 </div>
-                <div class="k-time-line" id="kTimeLine" @mouseenter="handleMouseenter" @mouseleave="handleLeave">
+                <!-- <div class="k-time-line" id="kTimeLine" @mouseenter="handleMouseenter" @mouseleave="handleLeave"> -->
+                <div class="k-time-line" id="kTimeLine">
                     <el-timeline id="scrollBox">
                         <el-timeline-item placement="top" v-for="(item, index) in timeList"
                         :key="index"
@@ -187,7 +188,7 @@ export default {
             ],
             moneyValue: 'EUR/USD',
             myChart: '',
-            baseUrl: 'ws:b45fe909.ngrok.io',
+            baseUrl: 'ws:e8b73843.ngrok.io',
             rateStatus: 'EUR/USD',
             timeStatus: '_1_min',
             currentTime: '',
@@ -420,55 +421,23 @@ export default {
             }
             this.wsNews.onmessage = (res) => {
                 // 更新新闻时，清空定时器
-                if (this.scrollStatus) {
-                    this.area.scrollTop = 0;
-                    clearTimeout(this.timeOut);
-                    clearInterval(this.time);
-                }
+                // if (this.scrollStatus) {
+                //     this.area.scrollTop = 0;
+                //     clearTimeout(this.timeOut);
+                //     clearInterval(this.time);
+                // }
                 this.newsStatus = true;
                 this.timelineStatus = false;
                 if (JSON.parse(res.data).timeList instanceof Array) {
                     that.timeList = JSON.parse(res.data).timeList;
-                    // that.timeList = [
-                    //     {
-                    //         label: "看涨",
-                    //         score: "56.4158082008",
-                    //         timestamp: "2019-05-13 16:42:00",
-                    //         txt: "日本政府下调称，基于同步指标的下调来看，日本经济在恶化，此为2013年1月来首",
-                    //     },
-                    //     {
-                    //         label: "看跌",
-                    //         score: "56.4158082008",
-                    //         timestamp: "2019-05-13 16:34:00",
-                    //         txt: "日本政府下调称，基于同步指标的下调来看，日本经济在恶化，此为2013年1月来首",
-                    //     },
-                    //     {
-                    //         label: "横盘",
-                    //         score: "56.4158082008",
-                    //         timestamp: "2019-05-13 16:20:00",
-                    //         txt: "日本政府下调称，基于同步指标的下调来看，日本经济在恶化，此为2013年1月来首",
-                    //     },
-                    //     {
-                    //         label: "看涨",
-                    //         score: "56.4158082008",
-                    //         timestamp: "2019-05-13 16:50:00",
-                    //         txt: "分数低",
-                    //     },
-                    //     {
-                    //         label: "看涨",
-                    //         score: "57.4158082008",
-                    //         timestamp: "2019-05-13 16:50:00",
-                    //         txt: "分数高",
-                    //     }
-                    // ]
                     if (that.timeList.length > 0 && that.scrollStatus) {
                         that.maxHeight = document.getElementById("scrollBox").offsetHeight;
-                        if (that.maxHeight > 0) {
-                            that.scrollStatus = false;
-                            that.timeOut = setTimeout(() => {
-                                that.starMove();
-                            }, that.delay)
-                        }
+                        // if (that.maxHeight > 0) {
+                        //     that.scrollStatus = false;
+                        //     that.timeOut = setTimeout(() => {
+                        //         that.starMove();
+                        //     }, that.delay)
+                        // }
                     }
                     that.timeList.map((item) => {
                         item.fmtime = this.reGroup(item.timestamp);
@@ -558,27 +527,6 @@ export default {
                                     that.noticeList.push(newBubble);
                                 }
                             }
-                            // if (that.kData[j+1][2] - that.kData[j][2] > 0.0005) {
-                            //     // 当前预测正确
-                            //     newBubble.itemStyle.normal.color = that.timeList[i].color
-                            //     if (that.timeList[i].label === '看涨') {
-                            //         newBubble.value = '涨'
-                            //         that.noticeList.push(newBubble)
-                            //     } else if (that.timeList[i].label === '看跌') {
-                            //         newBubble.value = '跌';
-                            //         that.noticeList.push(newBubble)
-                            //     }
-                            // } else {
-                            //     // 预测错误
-                            //     newBubble.itemStyle.normal.color = '#ccc';
-                            //     if (that.timeList[i].label === '看涨') {
-                            //         newBubble.value = '涨';
-                            //         that.noticeList.push(newBubble)
-                            //     } else if (that.timeList[i].label === '看跌') {
-                            //         newBubble.value = '跌';
-                            //         that.noticeList.push(newBubble)
-                            //     }
-                            // }
                         }
                     }
                 }
@@ -599,10 +547,8 @@ export default {
             }
         },
         handleTimeChange(value) {
-            this.wsNews.close()
-            this.wsK.close()
-            // this.area.scrollTop = 0;
-            // this.handleMouseenter();
+            this.wsNews.close();
+            this.wsK.close();
             if (value === '_5_min') {
                 this.timeGape = 5;
             } else if (value === '_10_min') {
@@ -617,10 +563,8 @@ export default {
             this.updateNews();
         },
         handleRateChange(value) {
-            this.wsNews.close()
-            this.wsK.close()
-            // this.area.scrollTop = 0;
-            // this.handleMouseenter();
+            this.wsNews.close();
+            this.wsK.close();
             if (value === 'EUR/USD' || value === "GBP/USD" || value === 'AUD/USD') {
                 this.reverseStatus = true;
             } else {
@@ -696,6 +640,7 @@ export default {
         BasicLoading
     },
     mounted() {
+        // 动态计算画布宽高
         const wrapHeight = document.getElementById('chartsWrap').offsetHeight - 40;
         const wrapWidth = document.getElementById('chartsWrap').offsetWidth - 50;
         document.getElementById('main').style.height = `${wrapHeight}px`;
@@ -709,15 +654,17 @@ export default {
                 this.myChart.setOption(option);
             }
         }, 1000)
+
+        
         // 滚动动画效果实现
-        this.area = document.getElementById("kTimeLine");
-        this.maxHeight = document.getElementById("scrollBox").offsetHeight;
-        this.containerHeight = document.getElementById('kTimeLine').offsetHeight;
-        this.area.scrollTop = 0;
-        this.timeOut = setTimeout(() => {
-            this.scrollStatus = true;
-            this.maxHeight > 0 && this.starMove();
-        }, this.delay)
+        // this.area = document.getElementById("kTimeLine");
+        // this.maxHeight = document.getElementById("scrollBox").offsetHeight;
+        // this.containerHeight = document.getElementById('kTimeLine').offsetHeight;
+        // this.area.scrollTop = 0;
+        // this.timeOut = setTimeout(() => {
+        //     this.scrollStatus = true;
+        //     this.maxHeight > 0 && this.starMove();
+        // }, this.delay)
     }
 }
 </script>
@@ -935,8 +882,6 @@ export default {
         .time-line-container{
             position: relative;
             width: 500px;
-            // flex: 1;
-            // -webkit-box-flex: 1;
             min-width: 400px;
             margin-left: 10px;
             @include flex-box;
@@ -964,9 +909,6 @@ export default {
                 overflow-y: auto;
             }
         }
-    }
-    .common-bg-box{
-        // background: #1E1D2E;
     }
     .li-item-top{
         border-bottom: 1px dashed #373E61;
