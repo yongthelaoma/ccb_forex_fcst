@@ -188,7 +188,7 @@ export default {
             ],
             moneyValue: 'EUR/USD',
             myChart: '',
-            baseUrl: 'ws:e8b73843.ngrok.io',
+            baseUrl: 'ws:34c4c495.ngrok.io',
             rateStatus: 'EUR/USD',
             timeStatus: '_1_min',
             currentTime: '',
@@ -646,14 +646,14 @@ export default {
         // document.getElementById('main').style.height = `${wrapHeight}px`;
         // document.getElementById('main').style.width = `${wrapWidth}px`;
         this.initCharts();
-        // setInterval(() => {
-        //     this.myChart.setOption(this.formateData());
-        //     if (this.noticeList.length > 0) {
-        //         var option =  this.myChart.getOption()
-        //         option.series[0].markPoint.data.push(this.noticeList);
-        //         this.myChart.setOption(option);
-        //     }
-        // }, 1000)
+        setInterval(() => {
+            this.myChart.setOption(this.formateData());
+            if (this.noticeList.length > 0) {
+                var option =  this.myChart.getOption()
+                option.series[0].markPoint.data.push(this.noticeList);
+                this.myChart.setOption(option);
+            }
+        }, 1000)
 
         
         // 滚动动画效果实现
