@@ -507,7 +507,6 @@ export default {
                                 newBubble.value = '涨'
                                 // 当前时间与 10分钟后的时间对比
                                 if (that.kData[j+that.predictGap]) {
-                                    debugger;
                                     if (that.kData[j+that.predictGap][2] - that.kData[j][2] > 0.0005) {
                                         // 预测对了
                                         newBubble.itemStyle.normal.color = that.timeList[i].color;
