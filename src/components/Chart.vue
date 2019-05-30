@@ -188,7 +188,7 @@ export default {
             ],
             moneyValue: 'EUR/USD',
             myChart: '',
-            baseUrl: 'ws:34c4c495.ngrok.io',
+            baseUrl: 'ws:ba5e34dd.ngrok.io/',
             rateStatus: 'EUR/USD',
             timeStatus: '_1_min',
             currentTime: '',
@@ -214,7 +214,8 @@ export default {
             //  表示当前是5分钟一根k线
             timeGape: 1,
             wsNews: '',
-            wsK: ''
+            wsK: '',
+            predictGap: 10,
         }
     },
     created() {
@@ -430,15 +431,15 @@ export default {
                 this.timelineStatus = false;
                 if (JSON.parse(res.data).timeList instanceof Array) {
                     that.timeList = JSON.parse(res.data).timeList;
-                    if (that.timeList.length > 0 && that.scrollStatus) {
-                        that.maxHeight = document.getElementById("scrollBox").offsetHeight;
-                        // if (that.maxHeight > 0) {
-                        //     that.scrollStatus = false;
-                        //     that.timeOut = setTimeout(() => {
-                        //         that.starMove();
-                        //     }, that.delay)
-                        // }
-                    }
+                    // if (that.timeList.length > 0 && that.scrollStatus) {
+                    //     that.maxHeight = document.getElementById("scrollBox").offsetHeight;
+                    //     if (that.maxHeight > 0) {
+                    //         that.scrollStatus = false;
+                    //         that.timeOut = setTimeout(() => {
+                    //             that.starMove();
+                    //         }, that.delay)
+                    //     }
+                    // }
                     that.timeList.map((item) => {
                         item.fmtime = this.reGroup(item.timestamp);
                         if (item.label === '看涨') {
@@ -486,8 +487,8 @@ export default {
                 item.push(data.high);
                 that.kData.push(item);
                 that.noticeList = [];
-                for (var i = 0; i < that.timeList.length; i++) {
-                    for (var j = 0; j < that.kData.length; j++) {
+                for (let i = 0; i < that.timeList.length; i++) {
+                    for (let j = 0; j < that.kData.length; j++) {
                         if (that.timeList[i].fmtime === that.kData[j][0]) {
                             const temp = [];
                             temp.push(that.timeList[i].fmtime);
@@ -502,29 +503,33 @@ export default {
                                     normal: { color }
                                 }
                             }
-
                             if (that.timeList[i].label === '看涨') {
                                 newBubble.value = '涨'
-                                if (that.kData[j+1][2] - that.kData[j][2] > 0.0005) {
-                                    // 预测对了
-                                    newBubble.itemStyle.normal.color = that.timeList[i].color;
-                                    that.noticeList.push(newBubble);
-                                } else {
-                                    // 预测错了
-                                    newBubble.itemStyle.normal.color = '#ccc';
-                                    that.noticeList.push(newBubble);
+                                // 当前时间与 10分钟后的时间对比
+                                if (that.kData[j+that.predictGap]) {
+                                    debugger;
+                                    if (that.kData[j+that.predictGap][2] - that.kData[j][2] > 0.0005) {
+                                        // 预测对了
+                                        newBubble.itemStyle.normal.color = that.timeList[i].color;
+                                        that.noticeList.push(newBubble);
+                                    } else {
+                                        // 预测错了
+                                        newBubble.itemStyle.normal.color = '#ccc';
+                                        that.noticeList.push(newBubble);
+                                    }
                                 }
-
                             } else if (that.timeList[i].label === '看跌') {
                                 newBubble.value = '跌';
-                                if (that.kData[j+1][2] - that.kData[j][2] < -0.0005) {
-                                    // 预测对了
-                                    newBubble.itemStyle.normal.color = that.timeList[i].color;
-                                    that.noticeList.push(newBubble);
-                                } else {
-                                    // 预测错了
-                                    newBubble.itemStyle.normal.color = '#ccc';
-                                    that.noticeList.push(newBubble);
+                                if (that.kData[j+that.predictGap]) {
+                                    if (that.kData[j+that.predictGap][2] - that.kData[j][2] < -0.0005) {
+                                        // 预测对了
+                                        newBubble.itemStyle.normal.color = that.timeList[i].color;
+                                        that.noticeList.push(newBubble);
+                                    } else {
+                                        // 预测错了
+                                        newBubble.itemStyle.normal.color = '#ccc';
+                                        that.noticeList.push(newBubble);
+                                    }
                                 }
                             }
                         }
@@ -557,6 +562,7 @@ export default {
                 this.timeGape = 1;
             }
             this.timeStatus = value;
+            this.predictGap = 10 / this.timeGape;
             this.kData = [];
             this.noticeList = [];
             this.updateIK();
