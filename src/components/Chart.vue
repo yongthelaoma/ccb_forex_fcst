@@ -405,7 +405,7 @@ export default {
                 },
                 grid: {
                     top: 10,
-                    bottom: 65
+                    bottom: 55
                     // bottom: 80
                 },
                 animation: false,
@@ -454,6 +454,8 @@ export default {
                             color: '#8392A5'
                         }
                     },
+                    height: 15,
+                    bottom: 10,
                     handleStyle: {
                         color: '#fff',
                         shadowBlur: 3,
@@ -1081,7 +1083,7 @@ export default {
         @include box-sizing(border-box);
         flex-direction: row;
         justify-content: space-between;
-        padding: 20px 30px;
+        padding: 20px 30px 5px;
         .head-left{
             flex: 1;
             -webkit-box-flex: 1;
