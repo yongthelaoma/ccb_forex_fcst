@@ -2,58 +2,83 @@
     <div class="charts">
         <div v-show="activeIndex === 0" class="max-width-container">
             <div class="charts-container">
-                <div class="charts-head">
-                    <div class="head-left">
-                        <p>实时行情</p>
-                        <div class="box-item-top">
-                            <span class="title-one">{{moneyValue}}</span>
-                            <span class="title-one">{{bid}}</span>
-                            <span class="result" :class="{'down': currentRate < 0, 'up': currentRate > 0}">{{currentRate > 0 ? '+' : ''}}{{currentRate}}</span>
+                <div class="left-top-container">
+                    <div class="charts-head">
+                        <div class="head-left">
+                            <!-- <p>实时行情</p> -->
+                            <template v-if="moneyValue === 'EUR/USD'">
+                                <div class="box-item-top">
+                                    <span class="title-one">{{moneyValue}}</span>
+                                    <span class="title-one">{{eurusd.bid}}</span>
+                                    <span class="result" :class="{'down': eurusd.rate < 0, 'up': eurusd.rate > 0}">{{eurusd.rate > 0 ? '+' : ''}}{{eurusd.rate}}</span>
+                                </div>
+                            </template>
+                            <template v-if="moneyValue === 'USD/JPY'">
+                                <div class="box-item-top">
+                                    <span class="title-one">{{moneyValue}}</span>
+                                    <span class="title-one">{{usdjpy.bid}}</span>
+                                    <span class="result" :class="{'down': usdjpy.rate < 0, 'up': usdjpy.rate > 0}">{{usdjpy.rate > 0 ? '+' : ''}}{{usdjpy.rate}}</span>
+                                </div>
+                            </template>
+                            <template v-if="moneyValue === '贵金属'">
+                                <div class="box-item-top">
+                                    <span class="title-one">{{moneyValue}}</span>
+                                    <span class="title-one">{{xau.bid}}</span>
+                                    <span class="result" :class="{'down': xau.rate < 0, 'up': xau.rate > 0}">{{xau.rate > 0 ? '+' : ''}}{{xau.rate}}</span>
+                                </div>
+                            </template>
+                            <template v-if="moneyValue === '美元指数'">
+                                <div class="box-item-top">
+                                    <span class="title-one">{{moneyValue}}</span>
+                                    <span class="title-one">{{dx.last}}</span>
+                                    <span class="result" :class="{'down': dx.rate < 0, 'up': dx.rate > 0}">{{dx.rate > 0 ? '+' : ''}}{{dx.rate}}</span>
+                                </div>
+                            </template>
+                        </div>
+                        <div class="head-right">  
+                            <el-select v-model="timeValue" placeholder="请选择" @change="handleTimeChange">
+                                <el-option
+                                size="mini"
+                                v-for="item in timeOptions"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                                </el-option>
+                            </el-select>
+                            <el-select v-model="moneyValue" placeholder="请选择" @change="handleRateChange">
+                                <el-option
+                                size="mini"
+                                v-for="item in typeOptions"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                                </el-option>
+                            </el-select>
                         </div>
                     </div>
-                    <div class="head-right">
-                        <el-select v-model="timeValue" placeholder="请选择" @change="handleTimeChange">
-                            <el-option
-                            size="mini"
-                            v-for="item in timeOptions"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value">
-                            </el-option>
-                        </el-select>
-                        <el-select v-model="moneyValue" placeholder="请选择" @change="handleRateChange">
-                            <el-option
-                            size="mini"
-                            v-for="item in typeOptions"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value">
-                            </el-option>
-                        </el-select>
+                    <div class="indicate-box">
+                        <ul class="indicate">
+                            <li>
+                                <img src="../assets/images/predict-up.png">涨
+                            </li>
+                            <li>
+                                <img src="../assets/images/predict-down.png">跌
+                            </li>
+                            <li>
+                                <img src="../assets/images/predict-wrong.png">错
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="charts-wrap" id="chartsWrap">
+                        <div id="main" style="width: 550px;height:300px;"></div>
                     </div>
                 </div>
-                <div class="indicate-box">
-                    <ul class="indicate">
-                        <li>
-                            <img src="../assets/images/predict-up.png">涨
-                        </li>
-                        <li>
-                            <img src="../assets/images/predict-down.png">跌
-                        </li>
-                        <li>
-                            <img src="../assets/images/predict-wrong.png">错
-                        </li>
-                    </ul>
-                </div>
-                <div class="charts-wrap" id="chartsWrap">
-                    <div id="main" style="width: 550px;height:300px;"></div>
-                </div>
                 <div  class="charts-controls">
-                    <p class="rate-title">实时汇率</p>
+                    <p class="rate-title">实时行情</p>
                     <ul class="ul-item">
                         <li>
                            <div class="li-item-top">
-                               <p class="rate-name">USD/JPY</p>
+                               <p class="rate-name">美元/日元</p>
                                <p class="rate-res"><span class="res">{{usdjpy.bid}}</span><i :class="{'el-icon-caret-top': usdjpy.rate > 0, 'el-icon-caret-bottom': usdjpy.rate < 0}"></i><i :class="{'blue': usdjpy.rate < 0, 'red': usdjpy.rate > 0}">{{usdjpy.ratePrecent > 0 ? '+' : ''}}{{usdjpy.ratePrecent}}</i></p>
                                <span>{{usdjpy.rate > 0 ? '+' : ''}}{{usdjpy.rate}}</span>
                            </div>
@@ -66,54 +91,54 @@
                         </li>
                         <li>
                            <div class="li-item-top">
-                               <p class="rate-name">GBP/USD</p>
-                               <p class="rate-res"><span class="res">{{gpbusd.bid}}</span><i :class="{'el-icon-caret-top': gpbusd.rate > 0, 'el-icon-caret-bottom': gpbusd.rate < 0}"></i><i :class="{'blue': gpbusd.rate < 0, 'red': gpbusd.rate > 0}">{{gpbusd.ratePrecent > 0 ? '+' : ''}}{{gpbusd.ratePrecent}}</i></p>
-                               <span>{{gpbusd.rate > 0 ? '+' : ''}}{{gpbusd.rate}}</span>
+                               <p class="rate-name">美元指数</p>
+                               <p class="rate-res"><span class="res">{{dx.last}}</span><i :class="{'el-icon-caret-top': dx.rate > 0, 'el-icon-caret-bottom': dx.rate < 0}"></i><i :class="{'blue': dx.rate < 0, 'red': dx.rate > 0}">{{dx.ratePrecent > 0 ? '+' : ''}}{{dx.ratePrecent}}</i></p>
+                               <span>{{dx.rate > 0 ? '+' : ''}}{{dx.rate}}</span>
                            </div>
                            <div class="li-item-bottom">
-                               <span>高 <i>{{gpbusd.high}}</i></span>
-                               <span>开 <i>{{gpbusd.open}}</i></span>
-                               <span>低 <i>{{gpbusd.low}}</i></span>
-                               <span>收 <i>{{gpbusd.close}}</i></span>
+                               <span>高 <i>{{dx.high}}</i></span>
+                               <span>开 <i>{{dx.open}}</i></span>
+                               <span>低 <i>{{dx.low}}</i></span>
+                               <span>收 <i>{{dx.close}}</i></span>
                            </div>
                         </li>
                         <li>
                            <div class="li-item-top">
-                               <p class="rate-name">USD/CAD</p>
-                               <p class="rate-res"><span class="res">{{usdcad.bid}}</span><i :class="{'el-icon-caret-top': usdcad.rate > 0, 'el-icon-caret-bottom': usdcad.rate < 0}"></i><i :class="{'blue': usdcad.rate < 0, 'red': usdcad.rate > 0}">{{usdcad.ratePrecent > 0 ? '+' : ''}}{{usdcad.ratePrecent}}</i></p>
-                               <span>{{usdcad.rate > 0 ? '+' : ''}}{{usdcad.rate}}</span>
+                               <p class="rate-name">黄金</p>
+                               <p class="rate-res"><span class="res">{{xau.bid}}</span><i :class="{'el-icon-caret-top': xau.rate > 0, 'el-icon-caret-bottom': xau.rate < 0}"></i><i :class="{'blue': xau.rate < 0, 'red': xau.rate > 0}">{{xau.ratePrecent > 0 ? '+' : ''}}{{xau.ratePrecent}}</i></p>
+                               <span>{{xau.rate > 0 ? '+' : ''}}{{xau.rate}}</span>
                            </div>
                            <div class="li-item-bottom">
-                               <span>高 <i>{{usdcad.high}}</i></span>
-                               <span>开 <i>{{usdcad.open}}</i></span>
-                               <span>低 <i>{{usdcad.low}}</i></span>
-                               <span>收 <i>{{usdcad.close}}</i></span>
+                               <span>高 <i>{{xau.high}}</i></span>
+                               <span>开 <i>{{xau.open}}</i></span>
+                               <span>低 <i>{{xau.low}}</i></span>
+                               <span>收 <i>{{xau.close}}</i></span>
                            </div>
                         </li>
                     </ul>
                 </div>
             </div>
             <div class="time-line-container">
-                <!-- <basic-loading v-show="timelineStatus"></basic-loading> -->
-                <div class="top-title">
-                    <span>资讯信息</span>
-                    <span>{{currentTime}}</span>
-                </div>
-                <!-- <div class="k-time-line" id="kTimeLine" @mouseenter="handleMouseenter" @mouseleave="handleLeave"> -->
-                <div class="k-time-line" id="kTimeLine">
-                    <el-timeline id="scrollBox">
-                        <el-timeline-item placement="top" v-for="(item, index) in timeList"
-                        :key="index"
-                        :color="item.color"
-                        :timestamp="item.timestamp">
-                            <el-card>
-                                <p>
-                                <i v-if="item.label === '横盘'" class="el-icon-caret-right">【{{item.label}}】</i>
-                                <i v-if="item.label !== '横盘'" :class="{'el-icon-caret-top': item.label === '看涨', 'el-icon-caret-bottom': item.label === '看跌'}">【{{item.label}}】</i>
-                                {{item.txt}}</p>
-                            </el-card>
-                        </el-timeline-item>
-                    </el-timeline>
+                <div class="right-top-container">
+                    <div class="top-title">
+                        <span>资讯信息</span>
+                        <span>{{currentTime}}</span>
+                    </div>
+                    <div class="k-time-line" id="kTimeLine">
+                        <el-timeline id="scrollBox">
+                            <el-timeline-item placement="top" v-for="(item, index) in timeList"
+                            :key="index"
+                            :color="item.color"
+                            :timestamp="item.timestamp">
+                                <el-card>
+                                    <p>
+                                    <i v-if="item.label === '横盘'" class="el-icon-caret-right">【{{item.label}}】</i>
+                                    <i v-if="item.label !== '横盘'" :class="{'el-icon-caret-top': item.label === '看涨', 'el-icon-caret-bottom': item.label === '看跌'}">【{{item.label}}】</i>
+                                    {{item.txt}}</p>
+                                </el-card>
+                            </el-timeline-item>
+                        </el-timeline>
+                    </div>
                 </div>
                  <div class="predict">
                     <ul>
@@ -135,7 +160,7 @@
         </div>
         <div class="header">
             <ul>
-                <li @click="handleTab(index)" :class="{'active': activeIndex === index}" v-for="(item, index) in navList" :key="index">{{item}}</li>
+                <li @click="activeIndex = index" :class="{'active': activeIndex === index}" v-for="(item, index) in navList" :key="index">{{item}}</li>
             </ul>
         </div>
     </div>
@@ -150,45 +175,38 @@ export default {
     name: 'charts',
     data() {
         return {
-            input: '',
-            timeList: [],
             timeOptions: [{
                 value: '_1_min',
                 label: '1分钟'
-                }, {
+            },{
                 value: '_5_mins',
                 label: '5分钟'
-                }, {
+            },{
                 value: '_10_mins',
                 label: '10分钟'
             }],
-            timeValue: '1分钟',
-            timelineStatus: true,
             typeOptions: [
                 {
                     value: 'EUR/USD',
                     label: 'EUR/USD'
-                },
-                {
+                },{
                     value: 'USD/JPY',
                     label: 'USD/JPY'
-                },
-                {
-                    value: 'GBP/USD',
-                    label: 'GBP/USD'
-                },
-                {
-                    value: 'USD/CAD',
-                    label: 'USD/CAD'
-                },
-                {
-                    value: 'AUD/USD',
-                    label: 'AUD/USD'
                 }
+                // ,{
+                //     value: '美元指数',
+                //     label: '美元指数'
+                // },{
+                //     value: '贵金属',
+                //     label: '贵金属'
+                // }
             ],
+            timeList: [],
+            timeValue: '1分钟',
+            timelineStatus: true,
             moneyValue: 'EUR/USD',
             myChart: '',
-            baseUrl: 'ws:ba5e34dd.ngrok.io/',
+            baseUrl: 'ws:172.16.100.169:8080',
             rateStatus: 'EUR/USD',
             timeStatus: '_1_min',
             currentTime: '',
@@ -196,8 +214,9 @@ export default {
             bid: '0',
             kData: [],
             usdjpy: {},
-            gpbusd: {},
-            usdcad: {},
+            eurusd: {},
+            xau: {}, // 黄金指数
+            dx: {}, // 美元实时指数
             newsStatus: false,
             noticeList: [],
             predictList: [],
@@ -216,27 +235,91 @@ export default {
             wsNews: '',
             wsK: '',
             predictGap: 10,
+            // bar 最大个数
+            maxKLength: 180,
         }
     },
     created() {
-        this.updateNews();
-        this.updateRate();
-        this.formatTime();
-        this.updateVerb();
+        // 启动咨询信息定时器
+        this.startClock();
+        // 获取3个实时汇率
+        this.initeRate();
+        // 获取统计信息
         this.fetchPredict();
-        this.updateIK();
+        this.updateNews();
+        setTimeout(() => {
+            this.updateIK();
+        }, 10000)
     },
     methods: {
+        // 初始化图表
+        initCharts() {
+            this.myChart = echarts.init(document.getElementById('main'));
+            this.myChart.setOption(this.updateOptions());
+        },
+        // 咨询信息定时器
+        startClock(date, fmt) {
+            setInterval(() => {
+                const date = new Date()
+                const month = date.getMonth() + 1 >= 10 ? date.getMonth() + 1 : `0${date.getMonth() + 1}`;
+                const ss = date.getSeconds() >= 10 ? date.getSeconds() : `0${date.getSeconds()}`;
+                const mm = date.getMinutes() >= 10 ? date.getMinutes() : `0${date.getMinutes()}`;
+                this.currentTime = `${month}月${date.getDate()}日 ${date.getHours()}:${mm}:${ss}`
+            }, 1000)
+        },
+        // 获取实时汇率三大块（美元/日元、黄金、美元指数）
+        initeRate() {
+            // USD/JPY
+            this.fetchRate(`${this.baseUrl}/ws/forex?symbol=USD&currency=JPY`, 'usdjpy');
+            // EUR/USD
+            this.fetchRate(`${this.baseUrl}/ws/forex?symbol=EUR&currency=USD`, 'eurusd');
+            // 美元指数
+            this.fetchRate(`${this.baseUrl}/ws/dx`, 'dx');
+            // 黄金
+            this.fetchRate(`${this.baseUrl}/ws/xau`, 'xau');
+        },
+        // 获取汇率封装
+        fetchRate(url, type) {
+            const ws = new WebSocket(url);
+            ws.onmessage = (res) => {
+                const data = JSON.parse(res.data);
+                if (data instanceof Object) {
+                    this[type]= data;
+                    if (type === 'usdjpy' || type === 'eurusd') {
+                        // 美元日元
+                        this[type].rate = ((data.bid - data.close) / data.close).toFixed(4);
+                        this[type].ratePrecent = `${(((data.bid - data.close) / data.close) * 100).toFixed(2)}%`;
+                    } else {
+                        // 黄金、美元指数
+                        this[type].rate = ((data.last - data.close) / data.close).toFixed(4);
+                        this[type].ratePrecent = `${(((data.last - data.close) / data.close) * 100).toFixed(2)}%`;
+                    }
+                }
+            }
+        },
+        // 获取统计信息
+        fetchPredict() {
+            const wsurl = `${this.baseUrl}/ws/analyse`
+            const ws = new WebSocket(wsurl);
+            ws.onmessage = (res) => {
+                const data = JSON.parse(res.data);
+                if (data instanceof Array) {
+                    this.predictList = data;
+                }
+            }
+        },
+        // 根据时间选项重组数据
         reGroup(date) {
             const times = new Date(date);
             // 转化成毫秒
             let seconeds = times.getTime();
-            // 2、获取当前的分钟
+            // 2、获取当前时间数据的分钟
             const minutes = times.getMinutes();
-            // 将当前时间归到对应的时间段下
+            // 将当前时间归到对应的时间段下，向前推，10分钟的话，14:35:00 归到 14:30:00
             if (minutes % this.timeGape !== 0) {
                 let addMinutes = this.timeGape - minutes % this.timeGape;
-                seconeds = seconeds + addMinutes * 60 * 1000;
+                // seconeds = seconeds + addMinutes * 60 * 1000;
+                seconeds = seconeds - addMinutes * 60 * 1000;
                 const newDate = new Date(seconeds);
                 const year = newDate.getFullYear();
                 const month = newDate.getMonth() + 1 >= 10 ? newDate.getMonth() + 1 : `0${newDate.getMonth() + 1}`;
@@ -248,17 +331,7 @@ export default {
                 return date;
             }
         },
-        handleTab(index) {
-            this.activeIndex = index;
-        },
-        formatTime(date, fmt) {
-            setInterval(() => {
-                const date = new Date()
-                const month = date.getMonth() + 1 >= 10 ? date.getMonth() + 1 : `0${date.getMonth() + 1}`;
-                const ss = date.getSeconds() >= 10 ? date.getSeconds() : `0${date.getSeconds()}`;
-                this.currentTime = `${month}月${date.getDate()}日 ${date.getHours()}:${date.getMinutes()}:${ss}`
-            }, 1000)
-        },
+        // 计算K线数据
         calculateMA() {
             function calculateMA(dayCount, data) {
                 var result = [];
@@ -276,7 +349,8 @@ export default {
                 return result;
             }
         },
-        formateData() {
+        // 更新echats options
+        updateOptions() {
             const rawData = this.kData || [];
             let dates = [];
             let data = [];
@@ -289,14 +363,7 @@ export default {
                 });
             }
             var option = {
-                backgroundColor: '#111111',
-                // legend: {
-                //     data: ['日K', 'MA5', 'MA10'],
-                //     inactiveColor: '#777',
-                //     textStyle: {
-                //         color: '#fff'
-                //     }
-                // },
+                background: '#304547',
                 tooltip: {
                     trigger: 'item',
                     axisPointer: {
@@ -357,7 +424,6 @@ export default {
                             }
                         },
                         markPoint: {
-                            // symbol: 'path://M10.8888889,7.14995057 L11.4444444,7.14995057 C11.7512693,7.14995057 12,7.39868126 12,7.70550612 L12,8.24997528 C12,8.85750216 11.5075022,9.35 10.8999753,9.35 L3.10002472,9.35 C2.49249784,9.35 2,8.85750216 2,8.24997528 L2,7.70550612 C2,7.39868126 2.24873069,7.14995057 2.55555556,7.14995057 L3.11132333,7.14995057 L3.11132333,4.98878278 C3.11132333,2.84106736 4.85239068,1.1 7.00010611,1.1 C9.14782153,1.1 10.8888889,2.84106736 10.8888889,4.98878278 L10.8888889,5.50766348 L10.8888889,7.14995057 Z',
                             symbolSize: 40,
                             label: {
                                 show:true
@@ -397,19 +463,12 @@ export default {
                     type: 'inside'
                 }]
             };
-            
             return option;
-        },
-        initCharts() {
-            this.myChart = echarts.init(document.getElementById('main'));
-            // 数据意义：开盘(open)，收盘(close)，最低(lowest)，最高(highest)
-            this.myChart.setOption(this.formateData());
         },
         // 获取实时新闻
         updateNews() {
-            // 打开新的websocket 连接
-            this.wsNews = new WebSocket(`${this.baseUrl}/ws/live`);
             const that = this;
+            this.wsNews = new WebSocket(`${this.baseUrl}/ws/live`);
             this.wsNews.onopen = () => {
                 this.timelineStatus = true;
             }
@@ -421,59 +480,48 @@ export default {
                 this.timelineStatus = false;
             }
             this.wsNews.onmessage = (res) => {
-                // 更新新闻时，清空定时器
-                // if (this.scrollStatus) {
-                //     this.area.scrollTop = 0;
-                //     clearTimeout(this.timeOut);
-                //     clearInterval(this.time);
-                // }
-                this.newsStatus = true;
-                this.timelineStatus = false;
-                if (JSON.parse(res.data).timeList instanceof Array) {
-                    that.timeList = JSON.parse(res.data).timeList;
-                    // if (that.timeList.length > 0 && that.scrollStatus) {
-                    //     that.maxHeight = document.getElementById("scrollBox").offsetHeight;
-                    //     if (that.maxHeight > 0) {
-                    //         that.scrollStatus = false;
-                    //         that.timeOut = setTimeout(() => {
-                    //             that.starMove();
-                    //         }, that.delay)
-                    //     }
-                    // }
-                    that.timeList.map((item) => {
-                        item.fmtime = this.reGroup(item.timestamp);
-                        if (item.label === '看涨') {
-                            that.reverseStatus === true ? item.label = '看跌' : item.label = '看涨'
-                            that.reverseStatus === true ? item.color = '#1AC998' : item.color = '#F25C62';
-                        } else if (item.label === '看跌') {
-                            that.reverseStatus === true ? item.label = '看涨' : item.label = '看跌'
-                            that.reverseStatus === true ? item.color = '#F25C62' : item.color = '#1AC998';
-                        }
-                    })
-                    
-                    const newData = [];
-                    const timeAsse = [];
-                    for (let i = 0; i < that.timeList.length; i++) {
-                        if (timeAsse.indexOf(that.timeList[i].fmtime) === -1) {
-                            newData.push(that.timeList[i]);
-                            timeAsse.push(that.timeList[i].fmtime);
-                        } else {
-                            if (that.timeList[timeAsse.indexOf(that.timeList[i].fmtime)].score < that.timeList[i].score) {
-                                newData[timeAsse.indexOf(that.timeList[i].fmtime)] = that.timeList[i];
-                            }
+                this.handleNewsData(res);
+            }
+        },
+        // 处理新闻数据
+        handleNewsData(res) {
+            const that = this;
+            this.newsStatus = true;
+            this.timelineStatus = false;
+            if (JSON.parse(res.data).timeList instanceof Array) {
+                that.timeList = JSON.parse(res.data).timeList;
+                that.timeList.map((item) => {
+                    item.fmtime = this.reGroup(item.timestamp);
+                    if (item.label === '看涨') {
+                        that.reverseStatus === true ? item.label = '看跌' : item.label = '看涨'
+                        that.reverseStatus === true ? item.color = '#1AC998' : item.color = '#F25C62';
+                    } else if (item.label === '看跌') {
+                        that.reverseStatus === true ? item.label = '看涨' : item.label = '看跌'
+                        that.reverseStatus === true ? item.color = '#F25C62' : item.color = '#1AC998';
+                    }
+                })
+                const newData = [];
+                const timeAsse = [];
+                for (let i = 0; i < that.timeList.length; i++) {
+                    if (timeAsse.indexOf(that.timeList[i].fmtime) === -1) {
+                        newData.push(that.timeList[i]);
+                        timeAsse.push(that.timeList[i].fmtime);
+                    } else {
+                        if (that.timeList[timeAsse.indexOf(that.timeList[i].fmtime)].score < that.timeList[i].score) {
+                            newData[timeAsse.indexOf(that.timeList[i].fmtime)] = that.timeList[i];
                         }
                     }
-                    that.timeList = newData;
                 }
+                that.timeList = newData;
             }
         },
         // 获取k线数据
         updateIK() {
             const rate = this.moneyValue.split('/');
             const time = this.timeStatus;
-            const url = `${this.baseUrl}/ws/historical?symbol=${rate[0]}&currency=${rate[1]}&endDateTime=&duration=3600&durationUnit=SECOND&barSize=${time}&keepUpToDate=true`;
-            this.wsK = new WebSocket(url);
             const that = this;
+            const url = `${this.baseUrl}/ws/historical?symbol=${rate[0]}&currency=${rate[1]}&endDateTime=&duration=10800&durationUnit=SECOND&barSize=${time}&keepUpToDate=true`;
+            this.wsK = new WebSocket(url);
             this.wsK.onerror = (error) => {
                 this.$message.error(error);
             }
@@ -504,112 +552,120 @@ export default {
                                 }
                             }
                             if (that.timeList[i].label === '看涨') {
-                                newBubble.value = '涨'
+                                newBubble.value = '涨';
+                                newBubble.itemStyle.normal.color = that.timeList[i].color;
+                                that.noticeList.push(newBubble);
                                 // 当前时间与 10分钟后的时间对比
-                                if (that.kData[j+that.predictGap]) {
-                                    debugger;
-                                    if (that.kData[j+that.predictGap][2] - that.kData[j][2] > 0.0005) {
-                                        // 预测对了
-                                        newBubble.itemStyle.normal.color = that.timeList[i].color;
-                                        that.noticeList.push(newBubble);
-                                    } else {
-                                        // 预测错了
-                                        newBubble.itemStyle.normal.color = '#ccc';
-                                        that.noticeList.push(newBubble);
-                                    }
-                                }
+                                // if (that.kData[j+that.predictGap]) {
+                                //     if (that.kData[j+that.predictGap][2] - that.kData[j][2] > 0.0005) {
+                                //         // 预测对了
+                                //         newBubble.itemStyle.normal.color = that.timeList[i].color;
+                                //         that.noticeList.push(newBubble);
+                                //     } else {
+                                //         // 预测错了
+                                //         newBubble.itemStyle.normal.color = '#ccc';
+                                //         that.noticeList.push(newBubble);
+                                //     }
+                                // }
                             } else if (that.timeList[i].label === '看跌') {
                                 newBubble.value = '跌';
-                                if (that.kData[j+that.predictGap]) {
-                                    if (that.kData[j+that.predictGap][2] - that.kData[j][2] < -0.0005) {
-                                        // 预测对了
-                                        newBubble.itemStyle.normal.color = that.timeList[i].color;
-                                        that.noticeList.push(newBubble);
-                                    } else {
-                                        // 预测错了
-                                        newBubble.itemStyle.normal.color = '#ccc';
-                                        that.noticeList.push(newBubble);
-                                    }
-                                }
+                                newBubble.itemStyle.normal.color = that.timeList[i].color;
+                                that.noticeList.push(newBubble);
+                                // if (that.kData[j+that.predictGap]) {
+                                //     if (that.kData[j+that.predictGap][2] - that.kData[j][2] < -0.0005) {
+                                //         // 预测对了
+                                //         newBubble.itemStyle.normal.color = that.timeList[i].color;
+                                //         that.noticeList.push(newBubble);
+                                //     } else {
+                                //         // 预测错了
+                                //         newBubble.itemStyle.normal.color = '#ccc';
+                                //         that.noticeList.push(newBubble);
+                                //     }
+                                // }
                             }
                         }
                     }
                 }
+                // 1分钟，最多180笔数据，5分钟，最多36数据，10分钟，最多18笔数据；
+                if (that.kData.length > that.maxKLength) {
+                    const limitKdata = that.kData.slice(0 - that.maxKLength);
+                    that.$set(that, 'kData', limitKdata);
+                }
             }
         },
-        // 获取实时汇率
-        updateRate() {
-            const rate = this.moneyValue.split('/');
-            const wsurl = `${this.baseUrl}/ws/forex?symbol=${rate[0]}&currency=${rate[1]}`
-            const ws = new WebSocket(wsurl);
-            ws.onmessage = (res) => {
-                const data = JSON.parse(res.data);
-                this.currentRate = ((data.bid - data.close) / data.close).toFixed(4);
-                this.bid = data.bid;
-            }
-            ws.onerror = (error) => {
-                this.$message.error(error);
-            }
-        },
+        // 切换时间
         handleTimeChange(value) {
             this.wsNews.close();
-            this.wsK.close();
-            if (value === '_5_min') {
+            // this.wsK.close();
+            if (value === '_5_mins') {
                 this.timeGape = 5;
-            } else if (value === '_10_min') {
+                this.maxKLength = 36;
+            } else if (value === '_10_mins') {
                 this.timeGape = 10;
+                this.maxKLength = 18;
             } else {
                 this.timeGape = 1;
+                this.maxKLength = 180;
             }
             this.timeStatus = value;
             this.predictGap = 10 / this.timeGape;
             this.kData = [];
             this.noticeList = [];
-            this.updateIK();
-            this.updateNews();
+            if (this.rateStatus === '贵金属') {
+                this.fetchHisK('/ws/xauhis');
+            } else if (this.rateStatus === '美元指数') {
+                this.fetchHisK('/ws/dxhis');
+            } else {
+                this.updateNews();
+                setTimeout(() => {
+                    this.updateIK();
+                }, 10000)
+            }
         },
+        // 切换汇率类型
         handleRateChange(value) {
+            // TODO 暂时关闭这两个close
+            // 断开新闻websocket 重新连接
             this.wsNews.close();
-            this.wsK.close();
-            if (value === 'EUR/USD' || value === "GBP/USD" || value === 'AUD/USD') {
+            // this.wsK.close();
+            // EUR/USD 贵金属 需要反转
+            if (value === 'EUR/USD' || value === '贵金属') {
                 this.reverseStatus = true;
             } else {
                 this.reverseStatus = false;
             }
-            this.kData = [];
-            this.noticeList = [];
+            this.$set(this, 'kData', []);
+            this.$set(this, 'noticeList', []);
             this.rateStatus = value;
-            this.updateNews();
-            this.updateIK();
-        },
-        handleVerbUpdate(rate, item) {
-            const wsurl = `${this.baseUrl}/ws/forex?symbol=${rate[0]}&currency=${rate[1]}`
-            const ws = new WebSocket(wsurl);
-            ws.onmessage = (res) => {
-                const data = JSON.parse(res.data);
-                if (data instanceof Object) {
-                    this[item] = data;
-                    this[item].rate = ((data.bid - data.close) / data.close).toFixed(4);
-                    this[item].ratePrecent = `${(((data.bid - data.close) / data.close) * 100).toFixed(2)}%`;
-                }
+            if (value === '贵金属') {
+                this.fetchHisK('/ws/xauhis');
+            } else if (value === '美元指数') {
+                this.fetchHisK('/ws/dxhis');
+            }else {
+                // 重新获取新闻，因为反转信息发生变化
+                this.updateNews();
+                setTimeout(() => {
+                    this.updateIK();
+                }, 10000)
             }
-            ws.onerror = (error) => {
+        },
+        // 获取贵金属、美元指数K线
+        fetchHisK(url) {
+            const that = this;
+            const time = this.timeStatus;
+            this.wsK = new WebSocket(`${this.baseUrl}${url}?&endDateTime=&duration=10800&durationUnit=SECOND&barSize=${time}&keepUpToDate=true`);
+            this.wsK.onerror = (error) => {
                 this.$message.error(error);
             }
-        },
-        updateVerb() {
-            this.handleVerbUpdate(['USD', 'JPY'], 'usdjpy');
-            this.handleVerbUpdate(['GBP', 'USD'], 'gpbusd');
-            this.handleVerbUpdate(['USD', 'CAD'], 'usdcad');
-        },
-        fetchPredict() {
-            const wsurl = `${this.baseUrl}/ws/analyse`
-            const ws = new WebSocket(wsurl);
-            ws.onmessage = (res) => {
+            this.wsK.onmessage = (res) => {
                 const data = JSON.parse(res.data);
-                if (data instanceof Array) {
-                    this.predictList = data;
-                }
+                const item = [];
+                item.push(data.time);
+                item.push(data.open);
+                item.push(data.close);
+                item.push(data.low);
+                item.push(data.high);
+                that.kData.push(item);
             }
         },
         handleMouseenter() {
@@ -640,7 +696,6 @@ export default {
                 this.scrollUp();
             }, this.speed)
         }
-
     },
     components: {
         BasicLoading
@@ -653,24 +708,13 @@ export default {
         document.getElementById('main').style.width = `${wrapWidth}px`;
         this.initCharts();
         setInterval(() => {
-            this.myChart.setOption(this.formateData());
+            this.myChart.setOption(this.updateOptions());
             if (this.noticeList.length > 0) {
                 var option =  this.myChart.getOption()
                 option.series[0].markPoint.data.push(this.noticeList);
                 this.myChart.setOption(option);
             }
         }, 1000)
-
-        
-        // 滚动动画效果实现
-        // this.area = document.getElementById("kTimeLine");
-        // this.maxHeight = document.getElementById("scrollBox").offsetHeight;
-        // this.containerHeight = document.getElementById('kTimeLine').offsetHeight;
-        // this.area.scrollTop = 0;
-        // this.timeOut = setTimeout(() => {
-        //     this.scrollStatus = true;
-        //     this.maxHeight > 0 && this.starMove();
-        // }, this.delay)
     }
 }
 </script>
@@ -679,11 +723,12 @@ export default {
     @import '@/assets/styles/global.scss';
     // elemnet reset
     .el-input__inner{
-       background: none;
-       border:1px solid #333333!important;
-       color: #FFFFFF!important;
-       width: 130px!important;
-       background-color: #333333!important;
+        background: none;
+        width: 130px!important;
+        background-color: #333333!important;
+        background:rgba(17,17,17,1) rgba(53,198,217,0.05)!important;
+        border-radius: 2px!important;
+        border:1px solid rgba(48,69,71,1)!important;
     }
     .el-select .el-input.is-focus .el-input__inner{
         border-color: #333333!important;
@@ -707,14 +752,20 @@ export default {
     .el-select-dropdown__item.hover, .el-select-dropdown__item:hover{
         background-color: #222222!important;
     }
+    .el-select-dropdown__item.selected{
+        background:rgba(49,85,99,1)!important;
+        box-shadow: inset 0px 0px 10px 0px rgba(98,191,255,1),0px 0px 1px 0px rgba(51,233,255,1)!important;
+    }
     .el-card{
-        background: #E9E9E9!important;
+        box-shadow:inset 0px 0px 18px 0px rgba(255,255,255,0.23)!important;
         border-radius:2px!important;
-        border: 1px solid #E9E9E9!important;
-        color: #333333!important;
+        color:rgba(255,255,255,1)!important;
         line-height: 20px!important;
         font-size: 12px!important;
         line-height: 18px!important;
+        box-shadow:inset 0px 0px 18px 0px rgba(255,255,255,0.23)!important;
+        border:1px solid rgba(73,73,73,1)!important;
+        background-color: #1D252E!important;
     }
     .el-card__body{
         padding: 10px!important;
@@ -758,9 +809,6 @@ export default {
         @include flex-box;
         flex-direction: column;
     }
-    .indicate-box{
-        background: #111111;
-    }
     .indicate{
         @include flex-box;
         align-items: center;
@@ -777,10 +825,11 @@ export default {
         }
     }
     .header{
-        background: #1E1D2E;
+        background: #000000;
         height: 50px;
         width: 100%;
         padding: 0 20px;
+        box-shadow:0px -1px 0px 0px rgba(51,51,51,1),0px -1px 0px 0px rgba(51,51,51,1);
         @include box-sizing(border-box);
         ul{
             @include flex-box;
@@ -795,29 +844,65 @@ export default {
                 padding-bottom: 2px;
                 cursor: pointer;
                 letter-spacing:5px;
+                border-right: 1px solid #141321;
+                color: #8F8F8F;
                 &.active{
                     background:rgba(55,62,97,1);
                     font-weight:bold;
-                    color:rgba(255,255,255,1);
-                    box-shadow: 0px 10px 0px 0px #F25C62;
                     font-family:PingFang-SC-Bold;
+                    font-weight:500;
+                    color:rgba(255,255,255,1);
+                    line-height:20px;
+                    letter-spacing:5px;
+                    text-shadow:0px 0px 7px rgba(182,182,182,0.5);
+                    background: linear-gradient(180deg, rgba(94,234,255,1) 0%, rgba(0,177,255,1) 100%);
+                    -webkit-background-clip:text;
+                    -webkit-text-fill-color:transparent;
+                    line-height: 48px;
                     position: relative;
                     &:after{
                         position: absolute;
                         content: '';
-                        width: 17px;
-                        height: 14px;
-                        background: url('../assets/images/arrow.svg') no-repeat center;
-                        transform: translateX(-50%);
-                        left: 50%;
-                        top: -8px;
+                        width: 36px;
+                        height: 36px;
+                        background: url('../assets/images/circle.svg') no-repeat;
                         background-size: contain;
+                        left: 16px;
+                        top: 6px;
                     }
                 }
             }
         }
     }
     .max-width-container{
+        .left-top-container{
+            flex: 1;
+            background:rgba(17,17,17,1) rgba(53,198,217,0.05);
+            border-radius:2px;
+            border:1px solid rgba(48,69,71,1);
+            overflow: hidden;
+            @include flex-box;
+            flex-direction: column;
+            position: relative;
+            &:after{
+                content: '';
+                width: 82px;
+                height: 57px;
+                position: absolute;
+                top: -16px;
+                right: -16px;
+                background: url('../assets/images/left_top.svg') no-repeat center;
+            }
+            &:before{
+                content: '';
+                width: 76px;
+                height: 65px;
+                position: absolute;
+                bottom: -15px;
+                left: -16px;
+                background: url('../assets/images/left_bottom.svg') no-repeat center;
+            }
+        }
         flex: 1;
         -webkit-box-flex: 1;
         padding: 10px 20px; 
@@ -832,33 +917,46 @@ export default {
             flex-direction: column;
             overflow: hidden;
             .charts-controls{
-                background: #1E1D2E;
+                @include flex-box;
+                flex-direction: column;
+                background: #1D252E;
+                border-radius:2px;
+                border:1px solid rgba(29,37,46,1);
+                padding: 0 10px 10px 10px;
+                @include box-sizing(border-box);
                 .rate-title{
                     color: #FECC16;
                     font-size:14px;
-                    padding: 10px 0 0 10px;
+                    padding: 10px 0 10px 10px;
                     @include box-sizing(border-box);
                 }
                 height: 188px;
                 margin-top: 10px;
                 @include box-sizing(border-box);
                 .ul-item{
-                    height: 100%;
+                    flex: 1;
+                    // height: 100%;
                     @include flex-box;
                     flex-direction: row;
                     justify-content: space-between;
                     li{
                         flex: 1;
-                        height: 100%;
+                        margin-right: 10px;
+                        // height: 100%;
                         padding: 10px;
                         @include box-sizing(border-box);
+                        box-shadow:inset 0px 0px 18px 0px rgba(255,255,255,0.23);
+                        border-radius:3px;
+                        border:1px solid rgba(73,73,73,1);
+                        &:last-child{
+                            margin-right: 0;
+                        }
                     }
                 }
             }
             .charts-wrap{
                 flex: 1;
                 -webkit-box-flex: 1;
-                background: #111111;
                 overflow: hidden;
                 padding: 20px 0;
                 @include box-sizing(border-box);
@@ -886,12 +984,18 @@ export default {
             }
         }
         .time-line-container{
-            position: relative;
             width: 500px;
             min-width: 400px;
             margin-left: 10px;
             @include flex-box;
             flex-direction: column;
+            .right-top-container{
+                background: pink;
+                flex: 1;
+                position: relative;
+                @include flex-box;
+                flex-direction: column;
+            }
             .top-title{
                 background: #222222;
                 @include box-sizing(border-box);
@@ -917,18 +1021,16 @@ export default {
         }
     }
     .li-item-top{
-        border-bottom: 1px dashed #373E61;
-        padding-bottom: 15px;
+        padding-bottom: 6px;
         .rate-name{
             font-size:14px;
-            margin-bottom: 10px;
+            line-height: 22px;
             color:rgba(176,185,228,1);
         }
         .rate-res{
             font-size:18px;
             line-height:26px;
             color:rgba(255,255,255,1);
-            margin-bottom: 6px;
             span{
                 display: inline-block;
                 width: 85px;
@@ -953,7 +1055,7 @@ export default {
         }
     }
     .li-item-bottom{
-        padding-top: 15px;
+        padding-top: 6px;
         @include flex-box;
         flex-direction: row;
         flex-wrap: wrap;
@@ -966,6 +1068,9 @@ export default {
                 color:rgba(176,185,228,1);
             }
             color:rgba(103,110,142,1);
+            &:nth-child(3), &:nth-child(4) {
+                margin-bottom: 0;
+            }
         }
     }
     .charts-head{
@@ -973,7 +1078,6 @@ export default {
         @include box-sizing(border-box);
         flex-direction: row;
         justify-content: space-between;
-        background: #111111;
         padding: 20px 30px;
         .head-left{
             flex: 1;
@@ -1013,32 +1117,53 @@ export default {
         padding-top: 10px;
         ul{
             height: 100%;
-            background:rgba(38,24,31,1);
             padding: 10px;
             @include box-sizing(border-box);
+            background:rgba(17,17,17,1);
+            border-radius:2px;
+            border:1px solid rgba(29,37,46,1);
             p{
                 font-size:14px;
-                color:rgba(103,110,142,1);
+                font-weight:500;
+                color:rgba(255,255,255,1);
+                line-height:20px;
+                text-shadow:0px 0px 7px rgba(182,182,182,0.5);
+                background:linear-gradient(180deg, rgba(140,140,140,1) 0%, rgba(255,255,255,1) 100%);
+                -webkit-background-clip:text;
+                -webkit-text-fill-color:transparent;
             }
             li{
                 font-size: 12px;
                 margin-top: 10px;
-                background:rgba(66,38,38,1);
-                border-radius:2px;
-                padding: 14px 10px;
+                background:rgba(255,255,255,0.05);
+                box-shadow:inset 0px 0px 18px 0px rgba(255,255,255,0.23);
+                border-radius:3px;
+                border:1px solid rgba(73,73,73,1);
+                padding: 12px 10px;
                 @include box-sizing(border-box);
                 span{
                     display: inline-block;
                     &:first-child{
-                        color:#E4B0B0;
+                        color:#ffffff;
                         width: 80px;
                     }
                     &:nth-child(2){
-                        color: #FFFFFF;
+                        color:rgba(216,247,255,1);
                         margin-right: 10px;
+                        position: relative;
+                        &:after{
+                            position: absolute;
+                            content: '';
+                            height: 3px;
+                            width: 100%;
+                            background:rgba(128,230,255,1);
+                            box-shadow:0px 0px 10px 0px rgba(26,201,152,1);
+                            left: 0;
+                            bottom: -5px;
+                        }
                     }
                     &:last-child{
-                        color: #E4B0B0;
+                        color: #ffffff;
                     }
                 }
             }
