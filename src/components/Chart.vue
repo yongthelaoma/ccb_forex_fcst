@@ -404,7 +404,9 @@ export default {
                     }
                 },
                 grid: {
-                    bottom: 80
+                    top: 10,
+                    bottom: 65
+                    // bottom: 80
                 },
                 animation: false,
                 toolbox: {
@@ -442,7 +444,7 @@ export default {
                         color: '#8392A5'
                     },
                     handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
-                    handleSize: '80%',
+                    handleSize: '50%',
                     dataBackground: {
                         areaStyle: {
                             color: '#8392A5'
@@ -637,13 +639,14 @@ export default {
             this.$set(this, 'kData', []);
             this.$set(this, 'noticeList', []);
             this.rateStatus = value;
+            this.updateNews();
             if (value === '贵金属') {
                 this.fetchHisK('/ws/xauhis');
             } else if (value === '美元指数') {
                 this.fetchHisK('/ws/dxhis');
             }else {
                 // 重新获取新闻，因为反转信息发生变化
-                this.updateNews();
+                // this.updateNews();
                 setTimeout(() => {
                     this.updateIK();
                 }, 10000)
@@ -702,8 +705,8 @@ export default {
     },
     mounted() {
         // 动态计算画布宽高
-        const wrapHeight = document.getElementById('chartsWrap').offsetHeight - 40;
-        const wrapWidth = document.getElementById('chartsWrap').offsetWidth - 50;
+        const wrapHeight = document.getElementById('chartsWrap').offsetHeight - 10;
+        const wrapWidth = document.getElementById('chartsWrap').offsetWidth - 10;
         document.getElementById('main').style.height = `${wrapHeight}px`;
         document.getElementById('main').style.width = `${wrapWidth}px`;
         this.initCharts();
@@ -958,7 +961,7 @@ export default {
                 flex: 1;
                 -webkit-box-flex: 1;
                 overflow: hidden;
-                padding: 10px 0;
+                // padding: 10px 0;
                 @include box-sizing(border-box);
                 .notice{
                     display: flex;
