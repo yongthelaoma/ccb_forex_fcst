@@ -64,9 +64,9 @@
                             <li>
                                 <img src="../assets/images/predict-down.png">跌
                             </li>
-                            <li>
+                            <!-- <li>
                                 <img src="../assets/images/predict-wrong.png">错
-                            </li>
+                            </li> -->
                         </ul>
                     </div>
                     <div class="charts-wrap" id="chartsWrap">
@@ -193,7 +193,6 @@ export default {
                     value: 'USD/JPY',
                     label: 'USD/JPY'
                 }
-                
                 // ,{
                 //     value: '美元指数',
                 //     label: '美元指数'
@@ -959,7 +958,7 @@ export default {
                 flex: 1;
                 -webkit-box-flex: 1;
                 overflow: hidden;
-                padding: 20px 0;
+                padding: 10px 0;
                 @include box-sizing(border-box);
                 .notice{
                     display: flex;
