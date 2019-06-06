@@ -5,10 +5,9 @@
                 <div class="left-top-container">
                     <div class="charts-head">
                         <div class="head-left">
-                            <!-- <p>实时行情</p> -->
                             <template v-if="moneyValue === 'EUR/USD'">
                                 <div class="box-item-top">
-                                    <span class="title-one">{{moneyValue}}</span>
+                                    <span class="title-one title-high-light">{{moneyValue}}</span>
                                     <span class="title-one">{{eurusd.bid}}</span>
                                     <span class="result" :class="{'down': eurusd.rate < 0, 'up': eurusd.rate > 0}">{{eurusd.rate > 0 ? '+' : ''}}{{eurusd.rate}}</span>
                                 </div>
@@ -328,8 +327,6 @@ export default {
             // 将当前时间归到对应的时间段下，向前推，10分钟的话，14:35:00 归到 14:30:00
             if (minutes % this.timeGape !== 0) {
                 let reduceMinutes = minutes % this.timeGape;
-                // let addMinutes = this.timeGape - minutes % this.timeGape;
-                // seconeds = seconeds + addMinutes * 60 * 1000;
                 seconeds = seconeds - reduceMinutes * 60 * 1000;
                 const newDate = new Date(seconeds);
                 const year = newDate.getFullYear();
@@ -374,7 +371,7 @@ export default {
                 });
             }
             var option = {
-                background: '#304547',
+                background: '#000000',
                 tooltip: {
                     trigger: 'item',
                     axisPointer: {
@@ -909,7 +906,7 @@ export default {
     .max-width-container{
         .left-top-container{
             flex: 1;
-            background:rgba(17,17,17,1) rgba(53,198,217,0.05);
+            background: #000000;
             border-radius:2px;
             border:1px solid rgba(48,69,71,1);
             overflow: hidden;
@@ -951,7 +948,7 @@ export default {
             .charts-controls{
                 @include flex-box;
                 flex-direction: column;
-                background: #1D252E;
+                background: #111111;
                 border-radius:2px;
                 border:1px solid rgba(29,37,46,1);
                 padding: 0 10px 10px 10px;
@@ -1022,14 +1019,13 @@ export default {
             @include flex-box;
             flex-direction: column;
             .right-top-container{
-                background: pink;
                 flex: 1;
                 position: relative;
                 @include flex-box;
                 flex-direction: column;
             }
             .top-title{
-                background: #222222;
+                background: #111111;
                 @include box-sizing(border-box);
                 padding: 20px;
                 font-size:14px;
@@ -1043,7 +1039,7 @@ export default {
                 }
             }
             .k-time-line{
-                background: #222222;
+                background: #111111;
                 padding: 0 20px;
                 @include box-sizing(border-box);
                 flex: 1;
@@ -1129,6 +1125,11 @@ export default {
                 color:rgba(255,255,255,1);
                 line-height:26px;
                 margin-right: 40px;
+            }
+            .title-high-light{
+                font-weight: bold;
+                font-size: 20px;
+                text-shadow:0px 0px 5px rgba(255,255,255,0.5);
             }
             .result{
                 font-size:12px;
