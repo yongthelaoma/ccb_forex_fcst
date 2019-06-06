@@ -156,7 +156,13 @@
             产品说明
         </div>
         <div v-show="activeIndex === 2" class="max-width-container common-bg-box">
-            原理说明
+            <div class="desc-content">
+                <p class="title">原理说明</p>
+                <p class="paragraph">本产品利用自然语言理解和深度学习技术对新闻事件对于行情走势的影响进行判断，从而辅助交易决策。对实时新闻事件的Aspect级别的情感分析技术是其中决策的依据。</p>
+                <p class="paragraph">基于aspect的情感分析指的是挖掘篇章中中涉及的aspect（即影响的方面），以及对每个aspect表现出来的情感。现有的工作一般把这个任务分成两个部分：aspect识别，可以是aspect term提取或者aspect分类；aspect的情感识别。aspect term提取指的是从原文本中直接提取涉及到的aspect的单词或词组，而aspect分类指的是为每个领域预定义aspect种类，然后对每个句子进行分类（可以属于一个或多个aspect，也可以不属于任何aspect）。</p>
+                <p class="paragraph">深度学习和词嵌入的技术突破为较为准确的aspect级别的情感分析提供了基础。使用神经网络的 aspect level 情感分类有三个重要任务。第一个任务是表示目标的语境词。该问题使用分布式的语义表示（如word2vec）来解决。第二个任务是生成目标表示，其可与语境词进行恰当地互动。通常的解决方案是学习目标嵌入（与词嵌入类似）。</p>
+                <p class="paragraph">力的循环神经网络来实现。因此，设计了CNN-Bi-LSTM with Attention的神经网络，针对历史新闻事件与行情的关系，训练了行情走势信号模型。</p>
+            </div>
         </div>
         <div class="header">
             <ul>
@@ -206,7 +212,8 @@ export default {
             timelineStatus: true,
             moneyValue: 'EUR/USD',
             myChart: '',
-            baseUrl: 'ws:172.16.100.169:8080',
+            // baseUrl: 'ws:172.16.100.169:8080',
+            baseUrl: 'ws:localhost:8080',
             rateStatus: 'EUR/USD',
             timeStatus: '_1_min',
             currentTime: '',
@@ -286,11 +293,15 @@ export default {
                 if (data instanceof Object) {
                     this[type]= data;
                     if (type === 'usdjpy' || type === 'eurusd') {
-                        // 美元日元
+                        // 美元、日元
                         this[type].rate = ((data.bid - data.close) / data.close).toFixed(4);
                         this[type].ratePrecent = `${(((data.bid - data.close) / data.close) * 100).toFixed(2)}%`;
+                    } else if (type === 'xau'){
+                        // 黄金
+                        this[type].rate = ((data.ask - data.close) / data.close).toFixed(4);
+                        this[type].ratePrecent = `${(((data.ask - data.close) / data.close) * 100).toFixed(2)}%`;
                     } else {
-                        // 黄金、美元指数
+                        // 美元指数
                         this[type].rate = ((data.last - data.close) / data.close).toFixed(4);
                         this[type].ratePrecent = `${(((data.last - data.close) / data.close) * 100).toFixed(2)}%`;
                     }
@@ -317,9 +328,10 @@ export default {
             const minutes = times.getMinutes();
             // 将当前时间归到对应的时间段下，向前推，10分钟的话，14:35:00 归到 14:30:00
             if (minutes % this.timeGape !== 0) {
-                let addMinutes = this.timeGape - minutes % this.timeGape;
+                let reduceMinutes = minutes % this.timeGape;
+                // let addMinutes = this.timeGape - minutes % this.timeGape;
                 // seconeds = seconeds + addMinutes * 60 * 1000;
-                seconeds = seconeds - addMinutes * 60 * 1000;
+                seconeds = seconeds - reduceMinutes * 60 * 1000;
                 const newDate = new Date(seconeds);
                 const year = newDate.getFullYear();
                 const month = newDate.getMonth() + 1 >= 10 ? newDate.getMonth() + 1 : `0${newDate.getMonth() + 1}`;
@@ -615,12 +627,12 @@ export default {
             this.predictGap = 10 / this.timeGape;
             this.kData = [];
             this.noticeList = [];
+            this.updateNews();
             if (this.rateStatus === '贵金属') {
                 this.fetchHisK('/ws/xauhis');
             } else if (this.rateStatus === '美元指数') {
                 this.fetchHisK('/ws/dxhis');
             } else {
-                this.updateNews();
                 setTimeout(() => {
                     this.updateIK();
                 }, 10000)
@@ -828,6 +840,22 @@ export default {
             margin-right: 20px;
             font-size: 12px;
         }
+    }
+    .desc-content{
+        max-width: 1200px;
+        margin: 40px auto;
+        p{
+            margin-bottom: 35px;
+        }
+        .title{
+            font-size: 28px;
+            color: #ffffff;
+        }
+        .paragraph{
+            font-size: 24px;
+            line-height: 38px;
+        }
+
     }
     .header{
         background: #000000;
