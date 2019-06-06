@@ -193,6 +193,7 @@ export default {
                     value: 'USD/JPY',
                     label: 'USD/JPY'
                 }
+                
                 // ,{
                 //     value: '美元指数',
                 //     label: '美元指数'
