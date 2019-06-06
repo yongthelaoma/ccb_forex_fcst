@@ -160,8 +160,7 @@
                 <p class="title">原理说明</p>
                 <p class="paragraph">本产品利用自然语言理解和深度学习技术对新闻事件对于行情走势的影响进行判断，从而辅助交易决策。对实时新闻事件的Aspect级别的情感分析技术是其中决策的依据。</p>
                 <p class="paragraph">基于aspect的情感分析指的是挖掘篇章中中涉及的aspect（即影响的方面），以及对每个aspect表现出来的情感。现有的工作一般把这个任务分成两个部分：aspect识别，可以是aspect term提取或者aspect分类；aspect的情感识别。aspect term提取指的是从原文本中直接提取涉及到的aspect的单词或词组，而aspect分类指的是为每个领域预定义aspect种类，然后对每个句子进行分类（可以属于一个或多个aspect，也可以不属于任何aspect）。</p>
-                <p class="paragraph">深度学习和词嵌入的技术突破为较为准确的aspect级别的情感分析提供了基础。使用神经网络的 aspect level 情感分类有三个重要任务。第一个任务是表示目标的语境词。该问题使用分布式的语义表示（如word2vec）来解决。第二个任务是生成目标表示，其可与语境词进行恰当地互动。通常的解决方案是学习目标嵌入（与词嵌入类似）。</p>
-                <p class="paragraph">力的循环神经网络来实现。因此，设计了CNN-Bi-LSTM with Attention的神经网络，针对历史新闻事件与行情的关系，训练了行情走势信号模型。</p>
+                <p class="paragraph">深度学习和词嵌入的技术突破为较为准确的aspect级别的情感分析提供了基础。使用神经网络的 aspect level 情感分类有三个重要任务。第一个任务是表示目标的语境词。该问题使用分布式的语义表示（如word2vec）来解决。第二个任务是生成目标表示，其可与语境词进行恰当地互动。通常的解决方案是学习目标嵌入（与词嵌入类似）。第三个任务是识别特定目标的重要情感语境词，这通常采用基于注意力的循环神经网络来实现。因此，设计了CNN-Bi-LSTM with Attention的神经网络，针对历史新闻事件与行情的关系，训练了行情走势信号模型。</p>
             </div>
         </div>
         <div class="header">
@@ -212,8 +211,8 @@ export default {
             timelineStatus: true,
             moneyValue: 'EUR/USD',
             myChart: '',
-            // baseUrl: 'ws:172.16.100.169:8080',
-            baseUrl: 'ws:localhost:8080',
+            baseUrl: 'ws:172.16.100.169:8080',
+            // baseUrl: 'ws:localhost:8080',
             rateStatus: 'EUR/USD',
             timeStatus: '_1_min',
             currentTime: '',
