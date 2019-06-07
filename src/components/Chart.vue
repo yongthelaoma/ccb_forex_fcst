@@ -124,6 +124,7 @@
                         <span>{{currentTime}}</span>
                     </div>
                     <div class="k-time-line" id="kTimeLine">
+                        <basic-loading v-show="timelineStatus"></basic-loading>
                         <el-timeline id="scrollBox">
                             <el-timeline-item placement="top" v-for="(item, index) in timeList"
                             :key="index"
@@ -133,7 +134,11 @@
                                     <p>
                                     <i v-if="item.label === '横盘'" class="el-icon-caret-right">【{{item.label}}】</i>
                                     <i v-if="item.label !== '横盘'" :class="{'el-icon-caret-top': item.label === '看涨', 'el-icon-caret-bottom': item.label === '看跌'}">【{{item.label}}】</i>
-                                    {{item.txt}}</p>
+                                    {{item.txt}}
+                                    </p>
+                                    <p class="line" v-if="item.dst"></p>
+                                    <p>{{item.dst}}</p>
+                                    <p class="translate-btn"><span @click="handleTranslate(item, index)"></span></p>
                                 </el-card>
                             </el-timeline-item>
                         </el-timeline>
@@ -141,6 +146,7 @@
                 </div>
                  <div class="predict">
                     <ul>
+                        <basic-loading v-show="predictStatus"></basic-loading>
                         <p>预测统计</p>
                         <li v-for="(item, index) in predictList" :key="index">
                             <span>{{item.date}}</span>
@@ -171,12 +177,18 @@
             </el-menu>
             <div class="container-pages">
                 <div class="page-item" v-show="pageIndex === '1'">
-                    <p class="paragraph">金融科技创新是建设银行的重要战略，也是银行科技化、智能化转型的关键。建设银行一向重视人工智能等前沿技术的发展和应用，善于结合自身业务打造出创新型的产品。本次金融市场研发的，基于财经资讯实时预测市场走势的智能机器人Alpha-Exchange就是创新成果之一。</p>
-                    <p class="paragraph">Alpha-Exchange基于自然语言理解和情绪分析模型，通过深度学习原理使机器人掌握历史数据分析，对比市场规律，最终达到根据实时资讯预测k线走势的效果。训练数据囊括了外汇、股票、贵金属、美元指数等几大市场，超过100万条分时k线数据以及50万条财经资讯分析、标注后喂给TensorFlow、Bert等机器学习和深度学习框架，达成对机器人的训练和调优。该产品为广大市场交易人员、散户投资者以及金融市场相关从业人员、甚至学术分析机构等提供了一个强大、成熟、智能的实时交易分析平台，利用该平台可以极大地减少分析工作量，在纷繁复杂的海量实时资讯中，快速有效地抓取关键信息并做出有历史依据的涨跌趋势预测，更高效、智能地辅助交易者作出理性判断，降低交易风险，提高收益率以及对交易对手的胜率。</p>
-                    <p class="paragraph">当前版本的Alpha-Exchange已经支持从外汇、股票、贵金属、到美元指数等几大国内外金融市场的K线预测；其中外汇交易支持欧元/美元、美元/日元、英镑/美元、美元/加币、澳元/美元等多种货币对；股票支持上证指数和深证成指；贵金属支持黄金等品种，之后产品将加入金融市场更多细分领域和相应数据，同时增加研究报告生成、分析结果对比、智能问答等闭环功能。本次游戏将通过趣味性地评测观众的投资潜能，让大家体验和感受Alpha-Exchange的能力和魅力。</p>
+                    <p class="paragraph">金融科技创新是建设银行的重要战略，也是银行科技化、智能化转型的关键。建设银行一向重视人工智能等前沿技术的发展和应用，善于结合自身业务打造出创新型的产品。本次金融市场研发的，基于财经资讯实时预测市场走势的智能机器人α-eXchange就是创新成果之一。</p>
+                    <p class="paragraph">α-eXchange基于自然语言理解和情绪分析模型，通过深度学习原理使机器人掌握历史数据分析，对比市场规律，最终达到根据实时资讯预测k线走势的效果。训练数据囊括了外汇、股票、贵金属、美元指数等几大市场，超过100万条分时k线数据以及50万条财经资讯分析、标注后提供给TensorFlow、Bert等机器学习和深度学习框架，达成对机器人的训练和调优。该产品为广大市场交易人员、散户投资者以及金融市场相关从业人员、甚至学术分析机构等提供了一个强大、成熟、智能的实时交易分析平台，利用该平台可以极大地减少分析工作量，在纷繁复杂的海量实时资讯中，快速有效地抓取关键信息并做出有历史依据的涨跌趋势预测，更高效、智能地辅助交易者作出理性判断，降低交易风险，提高收益率以及对交易对手的胜率。</p>
+                    <p class="paragraph">当前版本的α-eXchange已经支持从外汇、股票、贵金属、到美元指数等几大国内外金融市场的K线预测；其中外汇交易支持欧元/美元、美元/日元、英镑/美元、美元/加币、澳元/美元等多种货币对；股票支持上证指数和深证成指；贵金属支持黄金等品种，之后产品将加入金融市场更多细分领域和相应数据，同时增加研究报告生成、分析结果对比、智能问答等闭环功能。本次游戏将通过趣味性地评测观众的投资潜能，让大家体验和感受α-eXchange的能力和魅力。</p>
                 </div>
-                <div class="page-item" v-show="pageIndex === '2'">Product Description</div>
-                <div class="page-item" v-show="pageIndex === '3'">视图说明</div>
+                <div class="page-item" v-show="pageIndex === '2'">
+                    <p class="paragraph">Fin-tech innovation is an important strategy of the China Construction Bank, and also the key to the transformation of the banking technology and intelligence. China Construction Bank has always attached great importance to the development and application of advanced technology such as AI, and is good at combining its own business to create innovative products. The intelligent robot α-eXchange, which is based on financial information to predict the market trend in real time, is one of the innovative achievements of Fin-Tech.</p>
+                    <p class="paragraph">α-eXchange is based on natural language understanding（NLU） and emotional analysis model. Through deep learning principle, the robot can master historical data analysis and compare market rules. Finally, it can predict the trend of K-line based on real-time information. Training data include foreign exchange, stock, precious metals, dollar index and other major markets. More than 1 million historical K-line data and 500,000 financial information analysis, labeling and feeding to TensorFlow, Bert and other machine learning and in-depth learning frameworks to achieve the training and optimization of robots. This product provides a powerful, advanced and intelligent real-time trading analysis platform for market traders, retail investors, financial market practitioners, and even academic analysis institutions. Using this platform, the analysis workload can be greatly reduced. In the complex mass of real-time information, the key information can be quickly and effectively grasped and trend prediction can be made based on historical data. Prediction of declining trend can help traders make rational judgments more efficiently and intelligently, reduce transaction risk, increase profit and win rate to counterparties.</p>
+                    <p class="paragraph">The current version of α-eXchange has supported K-line forecasts in domestic and foreign financial markets from foreign exchange, stocks, precious metals, to the dollar index; foreign exchange transactions support EUR/USD, USD/JPY, GBP/USD, USD/CAD, AUD/USD and other currency pairs; stocks support Shanghai Stock Index and Shenzhen Stock Exchange Index; precious metals support gold and other products, after which more market data and products will be added. More functions, such as research report generation, analysis results comparison, intelligent question-and-answer and so on will be added into this product. By interestingly evaluating the audience's investment potential, this game will let you experience and feel the ability and charm of α-eXchange.</p>
+                </div>
+                <div class="page-item img-item" v-show="pageIndex === '3'">
+                    <img src="../assets/images/product.png">
+                </div>
             </div>
         </div>
         <div v-show="activeIndex === 2" class="max-width-container common-bg-box container-description">
@@ -199,13 +211,16 @@
             </el-menu>
             <div class="container-pages">
                 <div class="page-item" v-show="pageIndex2 === '1'">
-                    <p class="title">原理说明</p>
-                    <p class="paragraph">本产品利用自然语言理解和深度学习技术对新闻事件对于行情走势的影响进行判断，从而辅助交易决策。对实时新闻事件的Aspect级别的情感分析技术是其中决策的依据。</p>
-                    <p class="paragraph">基于aspect的情感分析指的是挖掘篇章中中涉及的aspect（即影响的方面），以及对每个aspect表现出来的情感。现有的工作一般把这个任务分成两个部分：aspect识别，可以是aspect term提取或者aspect分类；aspect的情感识别。aspect term提取指的是从原文本中直接提取涉及到的aspect的单词或词组，而aspect分类指的是为每个领域预定义aspect种类，然后对每个句子进行分类（可以属于一个或多个aspect，也可以不属于任何aspect）。</p>
+                    <p class="paragraph">本产品利用自然语言理解和深度学习技术对新闻事件对于行情走势的影响进行判断，从而辅助交易决策。对实时新闻事件的Aspect级别的情感分析技术是其中决策的依据。基于aspect的情感分析指的是挖掘篇章中涉及的aspect（即影响的方面），以及对每个aspect表现出来的情感。现有的工作一般把这个任务分成两个部分：aspect识别，可以是aspect term提取或者aspect分类；aspect的情感识别。aspect term提取指的是从原文本中直接提取涉及到的aspect的单词或词组，而aspect分类指的是为每个领域预定义aspect种类，然后对每个句子进行分类（可以属于一个或多个aspect，也可以不属于任何aspect）。</p>
                     <p class="paragraph">深度学习和词嵌入的技术突破为较为准确的aspect级别的情感分析提供了基础。使用神经网络的 aspect level 情感分类有三个重要任务。第一个任务是表示目标的语境词。该问题使用分布式的语义表示（如word2vec）来解决。第二个任务是生成目标表示，其可与语境词进行恰当地互动。通常的解决方案是学习目标嵌入（与词嵌入类似）。第三个任务是识别特定目标的重要情感语境词，这通常采用基于注意力的循环神经网络来实现。因此，设计了CNN-Bi-LSTM with Attention的神经网络，针对历史新闻事件与行情的关系，训练了行情走势信号模型。</p>
                 </div>
-                <div class="page-item" v-show="pageIndex2 === '2'">Algorithm Instruction</div>
-                <div class="page-item" v-show="pageIndex2 === '3'">视图说明</div>
+                <div class="page-item" v-show="pageIndex2 === '2'">
+                    <p class="paragraph">This product uses natural language understanding and deep learning technology to predict the impact of financial news events, and assist users to make trading decisions. Aspect-level sentiment analysis technology for real-time news events is the basis of trading decision-making.</p>
+                    <p class="paragraph">Aspect-based sentiment analysis refers to extracting the aspects involved in the text (that is, the area of impact), and the sentiments expressed by each aspect. This task can be diveded into two parts: aspect recognition, which can be aspect extraction or aspect classification, and sentiment analysis of the aspect. Aspect term extraction refers to the direct extraction of the words or phrases involved in an aspect from the original text. Aspect classification refers to predefining the category of an aspect for each domain, and then classifying each sentence (which may or may not belong to one or more aspects).The breakthroughs in deep learning and word embedding provide a basis for accurate emotional analysis at the aspect level. There are three important tasks in aspect level sentiment classification using neural networks. The first task is to express the target context words. This problem is solved by using distributed semantic representation (such as Word2vec). The second task is to generate target representations, which can interact properly with contextual words. The usual solution is learning goal embedding (similar to word embedding). The third task is to identify the important sentimental context words of a specific target, which is usually realized by the attention-based cyclic neural network. Therefore, the CNN-Bi-LSTM with Attention neural network is designed according to the relationship between historical news events and market, the market trend signal model is trained.</p>
+                </div>
+                <div class="page-item img-item" v-show="pageIndex2 === '3'">
+                    <img src="../assets/images/reason.png">
+                </div>
             </div>
         </div>
         <div class="header">
@@ -217,6 +232,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 import BasicLoading from './Loading';
 import moment from 'moment'
 
@@ -258,7 +275,8 @@ export default {
             myChart: '',
             // baseUrl: 'ws:172.16.100.169:8080',
             // baseUrl: 'ws:localhost:8080',
-            baseUrl: 'ws:b8a04140.ngrok.io',
+            baseUrl: '',
+            httpBaseUrl: '',
             rateStatus: 'EUR/USD',
             timeStatus: '_1_min',
             currentTime: '',
@@ -291,9 +309,15 @@ export default {
             maxKLength: 180,
             pageIndex: '1',
             pageIndex2: '1',
+            timer: null,
+            predictStatus: true,
         }
     },
     created() {
+        // const URL = '7a1eed87.ngrok.io';
+        const URL = 'localhost:8080';
+        this.baseUrl = `ws:${URL}`;
+        this.httpBaseUrl = `http://${URL}`;
         // 启动咨询信息定时器
         this.startClock();
         // 获取3个实时汇率
@@ -306,6 +330,21 @@ export default {
         }, 10000)
     },
     methods: {
+        // 新闻翻译
+        handleTranslate(item, index) {
+            const that = this;
+            axios({
+                url: `${this.httpBaseUrl}/trans?id=${item.id}`,
+                method: 'get',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            })
+                .then(function(res) {
+                    that.$set(that.timeList[index], 'dst', res.data.trans_result[0].dst);
+                })
+                .catch(function(error) {})
+        },
         // 初始化图表
         initCharts() {
             this.myChart = echarts.init(document.getElementById('main'));
@@ -359,7 +398,11 @@ export default {
         fetchPredict() {
             const wsurl = `${this.baseUrl}/ws/analyse`
             const ws = new WebSocket(wsurl);
+            ws.onopen = () => {
+                this.predictStatus = true;
+            }
             ws.onmessage = (res) => {
+                this.predictStatus = false;
                 const data = JSON.parse(res.data);
                 if (data instanceof Array) {
                     this.predictList = data;
@@ -531,7 +574,14 @@ export default {
             const that = this;
             this.wsNews = new WebSocket(`${this.baseUrl}/ws/live`);
             this.wsNews.onopen = () => {
+                this.noticeList = [];
+                const  option =  this.myChart.getOption();
+                option.series[0].markPoint.data = null;
+                this.myChart.setOption(option);
                 this.timelineStatus = true;
+                this.timer = setInterval(() => {
+                    this.wsNews.send('ping');
+                }, 30000)
             }
             this.wsNews.onerror = (error) => {
                 this.$message.error(error);
@@ -541,7 +591,16 @@ export default {
                 this.timelineStatus = false;
             }
             this.wsNews.onmessage = (res) => {
-                this.handleNewsData(res);
+                if (res.data !== 'pong') {
+                    this.timelineStatus = false;
+                    this.handleNewsData(res);
+                }
+            }
+            this.wsNews.onclose = () => {
+                clearInterval(this.timer);
+            }
+            this.wsNews.onerror = () => {
+                clearInterval(this.timer);
             }
         },
         // 处理新闻数据
@@ -660,9 +719,7 @@ export default {
             } else if (this.rateStatus === '美元指数') {
                 this.fetchHisK('/ws/dxhis');
             } else {
-                setTimeout(() => {
-                    this.updateIK();
-                }, 10000)
+                this.updateIK();
             }
         },
         // 切换汇率类型
@@ -671,7 +728,7 @@ export default {
             // 断开新闻websocket 重新连接
             this.wsNews.close();
             this.wsK.close();
-            console.log('--------close new socket-------');
+            clearInterval(this.timer);
             // EUR/USD 贵金属 需要反转
             if (value === 'EUR/USD' || value === '贵金属') {
                 this.reverseStatus = true;
@@ -680,15 +737,22 @@ export default {
             }
             this.$set(this, 'kData', []);
             this.$set(this, 'noticeList', []);
-            this.rateStatus = value;
             this.updateNews();
+            this.myChart.setOption(this.updateOptions());
             if (value === '贵金属') {
-                this.fetchHisK('/ws/xauhis');
+                setTimeout(() => {
+                    this.fetchHisK('/ws/xauhis');
+                }, 500)
+                
             } else if (value === '美元指数') {
-                this.fetchHisK('/ws/dxhis');
+                setTimeout(() => {
+                    this.fetchHisK('/ws/dxhis');
+                }, 500)
             }else {
                 // 重新获取新闻，因为反转信息发生变化
-                this.updateIK();
+                setTimeout(() => {
+                    this.updateIK();
+                }, 500)
             }
         },
         // 获取贵金属、美元指数K线
@@ -698,6 +762,9 @@ export default {
             this.wsK = new WebSocket(`${this.baseUrl}${url}?&endDateTime=&duration=10800&durationUnit=SECOND&barSize=${time}&keepUpToDate=true`);
             this.wsK.onerror = (error) => {
                 this.$message.error(error);
+            }
+            this.wsK.onopen = () => {
+                
             }
             this.wsK.onmessage = (res) => {
                 const data = JSON.parse(res.data);
@@ -736,7 +803,6 @@ export default {
                         }
                     }
                 }
-                console.log(that.noticeList);
                 // 1分钟，最多180笔数据，5分钟，最多36数据，10分钟，最多18笔数据；
                 if (that.kData.length > that.maxKLength) {
                     const limitKdata = that.kData.slice(0 - that.maxKLength);
@@ -896,6 +962,22 @@ export default {
         background: #000;
         @include flex-box;
         flex-direction: column;
+    }
+    .translate-btn{
+        text-align: right;
+        span{
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: url('../assets/images/tran.png') no-repeat center;
+            background-size: contain;
+            cursor: pointer;
+        }
+    }
+    .line{
+        padding-top: 5px;
+        margin-bottom: 5px;
+        border-bottom: 1px dashed #cccccc;
     }
     .indicate{
         @include flex-box;
@@ -1125,6 +1207,13 @@ export default {
                 width: 100%;
                 height: 100%;
                 overflow-y: auto;
+                &.img-item{
+                    text-align: center;
+                    img{
+                        width: 70%;
+                        height: auto;
+                    }
+                }
                 p{
                     margin-bottom: 35px;
                 }
@@ -1242,6 +1331,7 @@ export default {
         width: 100%;
         padding-top: 10px;
         ul{
+            position: relative;
             height: 100%;
             padding: 10px;
             @include box-sizing(border-box);
