@@ -257,7 +257,8 @@ export default {
             moneyValue: 'EUR/USD',
             myChart: '',
             // baseUrl: 'ws:172.16.100.169:8080',
-            baseUrl: 'ws:localhost:8080',
+            // baseUrl: 'ws:localhost:8080',
+            baseUrl: 'ws:b8a04140.ngrok.io',
             rateStatus: 'EUR/USD',
             timeStatus: '_1_min',
             currentTime: '',
@@ -552,6 +553,11 @@ export default {
                 that.timeList = JSON.parse(res.data).timeList;
                 that.timeList.map((item) => {
                     item.fmtime = this.reGroup(item.timestamp);
+                    if (that.moneyValue === '贵金属') {
+                        item.label = item.gold.label;
+                    } else {
+                        item.label = item.forex.label;
+                    }
                     if (item.label === '看涨') {
                         that.reverseStatus === true ? item.label = '看跌' : item.label = '看涨'
                         that.reverseStatus === true ? item.color = '#1AC998' : item.color = '#F25C62';
@@ -615,33 +621,10 @@ export default {
                                 newBubble.value = '涨';
                                 newBubble.itemStyle.normal.color = that.timeList[i].color;
                                 that.noticeList.push(newBubble);
-                                // 当前时间与 10分钟后的时间对比
-                                // if (that.kData[j+that.predictGap]) {
-                                //     if (that.kData[j+that.predictGap][2] - that.kData[j][2] > 0.0005) {
-                                //         // 预测对了
-                                //         newBubble.itemStyle.normal.color = that.timeList[i].color;
-                                //         that.noticeList.push(newBubble);
-                                //     } else {
-                                //         // 预测错了
-                                //         newBubble.itemStyle.normal.color = '#ccc';
-                                //         that.noticeList.push(newBubble);
-                                //     }
-                                // }
                             } else if (that.timeList[i].label === '看跌') {
                                 newBubble.value = '跌';
                                 newBubble.itemStyle.normal.color = that.timeList[i].color;
                                 that.noticeList.push(newBubble);
-                                // if (that.kData[j+that.predictGap]) {
-                                //     if (that.kData[j+that.predictGap][2] - that.kData[j][2] < -0.0005) {
-                                //         // 预测对了
-                                //         newBubble.itemStyle.normal.color = that.timeList[i].color;
-                                //         that.noticeList.push(newBubble);
-                                //     } else {
-                                //         // 预测错了
-                                //         newBubble.itemStyle.normal.color = '#ccc';
-                                //         that.noticeList.push(newBubble);
-                                //     }
-                                // }
                             }
                         }
                     }
@@ -687,7 +670,8 @@ export default {
             // TODO 暂时关闭这两个close
             // 断开新闻websocket 重新连接
             this.wsNews.close();
-            // this.wsK.close();
+            this.wsK.close();
+            console.log('--------close new socket-------');
             // EUR/USD 贵金属 需要反转
             if (value === 'EUR/USD' || value === '贵金属') {
                 this.reverseStatus = true;
@@ -704,10 +688,7 @@ export default {
                 this.fetchHisK('/ws/dxhis');
             }else {
                 // 重新获取新闻，因为反转信息发生变化
-                // this.updateNews();
-                setTimeout(() => {
-                    this.updateIK();
-                }, 10000)
+                this.updateIK();
             }
         },
         // 获取贵金属、美元指数K线
@@ -727,6 +708,40 @@ export default {
                 item.push(data.low);
                 item.push(data.high);
                 that.kData.push(item);
+                for (let i = 0; i < that.timeList.length; i++) {
+                    for (let j = 0; j < that.kData.length; j++) {
+                        if (that.timeList[i].fmtime === that.kData[j][0]) {
+                            const temp = [];
+                            temp.push(that.timeList[i].fmtime);
+                            temp.push(that.kData[j][2]);
+                            let color = '';
+                            let bubble = '';
+                            const newBubble = {
+                                name: that.timeList[i].txt.substring(0,20),
+                                coord: temp,
+                                value: bubble,
+                                itemStyle: {
+                                    normal: { color }
+                                }
+                            }
+                            if (that.timeList[i].label === '看涨') {
+                                newBubble.value = '涨';
+                                newBubble.itemStyle.normal.color = that.timeList[i].color;
+                                that.noticeList.push(newBubble);
+                            } else if (that.timeList[i].label === '看跌') {
+                                newBubble.value = '跌';
+                                newBubble.itemStyle.normal.color = that.timeList[i].color;
+                                that.noticeList.push(newBubble);
+                            }
+                        }
+                    }
+                }
+                console.log(that.noticeList);
+                // 1分钟，最多180笔数据，5分钟，最多36数据，10分钟，最多18笔数据；
+                if (that.kData.length > that.maxKLength) {
+                    const limitKdata = that.kData.slice(0 - that.maxKLength);
+                    that.$set(that, 'kData', limitKdata);
+                }
             }
         },
         handleMouseenter() {
