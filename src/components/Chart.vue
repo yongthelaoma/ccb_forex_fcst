@@ -151,15 +151,61 @@
                  </div>
             </div>
         </div>
-        <div v-show="activeIndex === 1" class="max-width-container common-bg-box">
-            产品说明
+        <div v-show="activeIndex === 1" class="max-width-container common-bg-box container-description">
+            <el-menu
+                default-active="1"
+                class="el-menu-vertical-demo"
+                background-color="#000000"
+                active-text-color="#ffffff"
+                @select="handelSelet"
+                text-color="#fff">
+                <el-menu-item index="1">
+                    <span slot="title">产品介绍</span>
+                </el-menu-item>
+                <el-menu-item index="2">
+                    <span slot="title">Product Description</span>
+                </el-menu-item>
+                <el-menu-item index="3">
+                    <span slot="title">视图说明</span>
+                </el-menu-item>
+            </el-menu>
+            <div class="container-pages">
+                <div class="page-item" v-show="pageIndex === '1'">
+                    <p class="paragraph">金融科技创新是建设银行的重要战略，也是银行科技化、智能化转型的关键。建设银行一向重视人工智能等前沿技术的发展和应用，善于结合自身业务打造出创新型的产品。本次金融市场研发的，基于财经资讯实时预测市场走势的智能机器人Alpha-Exchange就是创新成果之一。</p>
+                    <p class="paragraph">Alpha-Exchange基于自然语言理解和情绪分析模型，通过深度学习原理使机器人掌握历史数据分析，对比市场规律，最终达到根据实时资讯预测k线走势的效果。训练数据囊括了外汇、股票、贵金属、美元指数等几大市场，超过100万条分时k线数据以及50万条财经资讯分析、标注后喂给TensorFlow、Bert等机器学习和深度学习框架，达成对机器人的训练和调优。该产品为广大市场交易人员、散户投资者以及金融市场相关从业人员、甚至学术分析机构等提供了一个强大、成熟、智能的实时交易分析平台，利用该平台可以极大地减少分析工作量，在纷繁复杂的海量实时资讯中，快速有效地抓取关键信息并做出有历史依据的涨跌趋势预测，更高效、智能地辅助交易者作出理性判断，降低交易风险，提高收益率以及对交易对手的胜率。</p>
+                    <p class="paragraph">当前版本的Alpha-Exchange已经支持从外汇、股票、贵金属、到美元指数等几大国内外金融市场的K线预测；其中外汇交易支持欧元/美元、美元/日元、英镑/美元、美元/加币、澳元/美元等多种货币对；股票支持上证指数和深证成指；贵金属支持黄金等品种，之后产品将加入金融市场更多细分领域和相应数据，同时增加研究报告生成、分析结果对比、智能问答等闭环功能。本次游戏将通过趣味性地评测观众的投资潜能，让大家体验和感受Alpha-Exchange的能力和魅力。</p>
+                </div>
+                <div class="page-item" v-show="pageIndex === '2'">Product Description</div>
+                <div class="page-item" v-show="pageIndex === '3'">视图说明</div>
+            </div>
         </div>
-        <div v-show="activeIndex === 2" class="max-width-container common-bg-box">
-            <div class="desc-content">
-                <p class="title">原理说明</p>
-                <p class="paragraph">本产品利用自然语言理解和深度学习技术对新闻事件对于行情走势的影响进行判断，从而辅助交易决策。对实时新闻事件的Aspect级别的情感分析技术是其中决策的依据。</p>
-                <p class="paragraph">基于aspect的情感分析指的是挖掘篇章中中涉及的aspect（即影响的方面），以及对每个aspect表现出来的情感。现有的工作一般把这个任务分成两个部分：aspect识别，可以是aspect term提取或者aspect分类；aspect的情感识别。aspect term提取指的是从原文本中直接提取涉及到的aspect的单词或词组，而aspect分类指的是为每个领域预定义aspect种类，然后对每个句子进行分类（可以属于一个或多个aspect，也可以不属于任何aspect）。</p>
-                <p class="paragraph">深度学习和词嵌入的技术突破为较为准确的aspect级别的情感分析提供了基础。使用神经网络的 aspect level 情感分类有三个重要任务。第一个任务是表示目标的语境词。该问题使用分布式的语义表示（如word2vec）来解决。第二个任务是生成目标表示，其可与语境词进行恰当地互动。通常的解决方案是学习目标嵌入（与词嵌入类似）。第三个任务是识别特定目标的重要情感语境词，这通常采用基于注意力的循环神经网络来实现。因此，设计了CNN-Bi-LSTM with Attention的神经网络，针对历史新闻事件与行情的关系，训练了行情走势信号模型。</p>
+        <div v-show="activeIndex === 2" class="max-width-container common-bg-box container-description">
+            <el-menu
+                default-active="1"
+                class="el-menu-vertical-demo"
+                background-color="#000000"
+                active-text-color="#ffffff"
+                @select="handelSelet2"
+                text-color="#fff">
+                <el-menu-item index="1">
+                    <span slot="title">原理介绍</span>
+                </el-menu-item>
+                <el-menu-item index="2">
+                    <span slot="title">Algorithm Instruction</span>
+                </el-menu-item>
+                <el-menu-item index="3">
+                    <span slot="title">视图说明</span>
+                </el-menu-item>
+            </el-menu>
+            <div class="container-pages">
+                <div class="page-item" v-show="pageIndex2 === '1'">
+                    <p class="title">原理说明</p>
+                    <p class="paragraph">本产品利用自然语言理解和深度学习技术对新闻事件对于行情走势的影响进行判断，从而辅助交易决策。对实时新闻事件的Aspect级别的情感分析技术是其中决策的依据。</p>
+                    <p class="paragraph">基于aspect的情感分析指的是挖掘篇章中中涉及的aspect（即影响的方面），以及对每个aspect表现出来的情感。现有的工作一般把这个任务分成两个部分：aspect识别，可以是aspect term提取或者aspect分类；aspect的情感识别。aspect term提取指的是从原文本中直接提取涉及到的aspect的单词或词组，而aspect分类指的是为每个领域预定义aspect种类，然后对每个句子进行分类（可以属于一个或多个aspect，也可以不属于任何aspect）。</p>
+                    <p class="paragraph">深度学习和词嵌入的技术突破为较为准确的aspect级别的情感分析提供了基础。使用神经网络的 aspect level 情感分类有三个重要任务。第一个任务是表示目标的语境词。该问题使用分布式的语义表示（如word2vec）来解决。第二个任务是生成目标表示，其可与语境词进行恰当地互动。通常的解决方案是学习目标嵌入（与词嵌入类似）。第三个任务是识别特定目标的重要情感语境词，这通常采用基于注意力的循环神经网络来实现。因此，设计了CNN-Bi-LSTM with Attention的神经网络，针对历史新闻事件与行情的关系，训练了行情走势信号模型。</p>
+                </div>
+                <div class="page-item" v-show="pageIndex2 === '2'">Algorithm Instruction</div>
+                <div class="page-item" v-show="pageIndex2 === '3'">视图说明</div>
             </div>
         </div>
         <div class="header">
@@ -197,13 +243,13 @@ export default {
                     value: 'USD/JPY',
                     label: 'USD/JPY'
                 }
-                // ,{
-                //     value: '美元指数',
-                //     label: '美元指数'
-                // },{
-                //     value: '贵金属',
-                //     label: '贵金属'
-                // }
+                ,{
+                    value: '美元指数',
+                    label: '美元指数'
+                },{
+                    value: '贵金属',
+                    label: '贵金属'
+                }
             ],
             timeList: [],
             timeValue: '1分钟',
@@ -242,6 +288,8 @@ export default {
             predictGap: 10,
             // bar 最大个数
             maxKLength: 180,
+            pageIndex: '1',
+            pageIndex2: '1',
         }
     },
     created() {
@@ -608,7 +656,7 @@ export default {
         // 切换时间
         handleTimeChange(value) {
             this.wsNews.close();
-            // this.wsK.close();
+            this.wsK.close();
             if (value === '_5_mins') {
                 this.timeGape = 5;
                 this.maxKLength = 36;
@@ -708,6 +756,12 @@ export default {
             this.time = setInterval(() => {
                 this.scrollUp();
             }, this.speed)
+        },
+        handelSelet(index) {
+            this.pageIndex = index;
+        },
+        handelSelet2(index) {
+            this.pageIndex2 = index;
         }
     },
     components: {
@@ -815,6 +869,12 @@ export default {
         color: #00857A!important;
         font-style: normal!important;
     }
+    .el-menu-item.is-active{
+        border-left: 2px solid #5ECDFF!important;
+    }
+    .el-menu{
+        border-right: solid 1px #232323!important;
+    }
     .charts {
         width: 100%;
         height: 100vh;
@@ -836,22 +896,6 @@ export default {
             margin-right: 20px;
             font-size: 12px;
         }
-    }
-    .desc-content{
-        max-width: 1200px;
-        margin: 40px auto;
-        p{
-            margin-bottom: 35px;
-        }
-        .title{
-            font-size: 28px;
-            color: #ffffff;
-        }
-        .paragraph{
-            font-size: 24px;
-            line-height: 38px;
-        }
-
     }
     .header{
         background: #000000;
@@ -1045,6 +1089,40 @@ export default {
                 flex: 1;
                 -webkit-box-flex: 1;
                 overflow-y: auto;
+            }
+        }
+    }
+    // 说明文档
+    .container-description{
+        height: 100%;
+        padding: 0;
+        display: flex;
+        flex: row;
+        overflow: hidden;
+        .el-menu{
+            width: 234px;
+        }
+        .container-pages{
+            flex: 1;
+            padding: 20px 40px;
+            @include box-sizing(border-box);
+            .page-item{
+                width: 100%;
+                height: 100%;
+                overflow-y: auto;
+                p{
+                    margin-bottom: 35px;
+                }
+                .title{
+                    font-size: 20px;
+                    color: #ffffff;
+                }
+                .paragraph{
+                    font-size: 16px;
+                    line-height: 28px;
+                    text-align: justify;
+                    text-indent: 2em;
+                }
             }
         }
     }
