@@ -137,7 +137,7 @@
                                     {{item.txt}}
                                     </p>
                                     <p class="line" v-if="item.dst"></p>
-                                    <p>{{item.dst}}</p>
+                                    <p class="dst">{{item.dst}}</p>
                                     <p class="translate-btn"><span @click="handleTranslate(item, index)"></span></p>
                                 </el-card>
                             </el-timeline-item>
@@ -187,7 +187,7 @@
                     <p class="paragraph">The current version of α-eXchange has supported K-line forecasts in domestic and foreign financial markets from foreign exchange, stocks, precious metals, to the dollar index; foreign exchange transactions support EUR/USD, USD/JPY, GBP/USD, USD/CAD, AUD/USD and other currency pairs; stocks support Shanghai Stock Index and Shenzhen Stock Exchange Index; precious metals support gold and other products, after which more market data and products will be added. More functions, such as research report generation, analysis results comparison, intelligent question-and-answer and so on will be added into this product. By interestingly evaluating the audience's investment potential, this game will let you experience and feel the ability and charm of α-eXchange.</p>
                 </div>
                 <div class="page-item img-item" v-show="pageIndex === '3'">
-                    <img src="../assets/images/product.png">
+                    <img src="../assets/images/reason.png">
                 </div>
             </div>
         </div>
@@ -218,8 +218,8 @@
                     <p class="paragraph">This product uses natural language understanding and deep learning technology to predict the impact of financial news events, and assist users to make trading decisions. Aspect-level sentiment analysis technology for real-time news events is the basis of trading decision-making.</p>
                     <p class="paragraph">Aspect-based sentiment analysis refers to extracting the aspects involved in the text (that is, the area of impact), and the sentiments expressed by each aspect. This task can be diveded into two parts: aspect recognition, which can be aspect extraction or aspect classification, and sentiment analysis of the aspect. Aspect term extraction refers to the direct extraction of the words or phrases involved in an aspect from the original text. Aspect classification refers to predefining the category of an aspect for each domain, and then classifying each sentence (which may or may not belong to one or more aspects).The breakthroughs in deep learning and word embedding provide a basis for accurate emotional analysis at the aspect level. There are three important tasks in aspect level sentiment classification using neural networks. The first task is to express the target context words. This problem is solved by using distributed semantic representation (such as Word2vec). The second task is to generate target representations, which can interact properly with contextual words. The usual solution is learning goal embedding (similar to word embedding). The third task is to identify the important sentimental context words of a specific target, which is usually realized by the attention-based cyclic neural network. Therefore, the CNN-Bi-LSTM with Attention neural network is designed according to the relationship between historical news events and market, the market trend signal model is trained.</p>
                 </div>
-                <div class="page-item img-item" v-show="pageIndex2 === '3'">
-                    <img src="../assets/images/reason.png">
+                <div class="page-item img-item img-item-big" v-show="pageIndex2 === '3'">
+                    <img src="../assets/images/product.png">
                 </div>
             </div>
         </div>
@@ -332,6 +332,10 @@ export default {
     methods: {
         // 新闻翻译
         handleTranslate(item, index) {
+            if (item.dst) {
+                item.dst = '';
+                return;
+            }
             const that = this;
             axios({
                 url: `${this.httpBaseUrl}/trans?id=${item.id}`,
@@ -697,6 +701,7 @@ export default {
         },
         // 切换时间
         handleTimeChange(value) {
+            debugger;
             this.wsNews.close();
             this.wsK.close();
             if (value === '_5_mins') {
@@ -714,9 +719,9 @@ export default {
             this.kData = [];
             this.noticeList = [];
             this.updateNews();
-            if (this.rateStatus === '贵金属') {
+            if (this.moneyValue === '贵金属') {
                 this.fetchHisK('/ws/xauhis');
-            } else if (this.rateStatus === '美元指数') {
+            } else if (this.moneyValue === '美元指数') {
                 this.fetchHisK('/ws/dxhis');
             } else {
                 this.updateIK();
@@ -979,6 +984,9 @@ export default {
         margin-bottom: 5px;
         border-bottom: 1px dashed #cccccc;
     }
+    .dst{
+        color: #1875F0 ;
+    }
     .indicate{
         @include flex-box;
         align-items: center;
@@ -1210,8 +1218,13 @@ export default {
                 &.img-item{
                     text-align: center;
                     img{
-                        width: 70%;
+                        width: 100%;
                         height: auto;
+                    }
+                }
+                &.img-item-big{
+                    img{
+                        width: 80%;
                     }
                 }
                 p{
