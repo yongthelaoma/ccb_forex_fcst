@@ -314,7 +314,7 @@ export default {
         }
     },
     created() {
-        // const URL = '7a1eed87.ngrok.io';
+        // const URL = '172.16.100.169:8080';
         const URL = 'localhost:8080';
         this.baseUrl = `ws:${URL}`;
         this.httpBaseUrl = `http://${URL}`;
@@ -345,7 +345,8 @@ export default {
                 },
             })
                 .then(function(res) {
-                    that.$set(that.timeList[index], 'dst', res.data.trans_result[0].dst);
+                    const dstArr = res.data.trans_result.map((item) => item.dst);
+                    that.$set(that.timeList[index], 'dst', dstArr.join(''));
                 })
                 .catch(function(error) {})
         },
@@ -697,6 +698,7 @@ export default {
                     const limitKdata = that.kData.slice(0 - that.maxKLength);
                     that.$set(that, 'kData', limitKdata);
                 }
+                console.log(that.kData);
             }
         },
         // 切换时间
@@ -1223,8 +1225,13 @@ export default {
                     }
                 }
                 &.img-item-big{
+                    position: relative;
                     img{
                         width: 80%;
+                        position: absolute;
+                        transform: translate(-50%, -50%);
+                        left: 50%;
+                        top: 50%;
                     }
                 }
                 p{
