@@ -273,8 +273,6 @@ export default {
             timelineStatus: true,
             moneyValue: 'EUR/USD',
             myChart: '',
-            // baseUrl: 'ws:172.16.100.169:8080',
-            // baseUrl: 'ws:localhost:8080',
             baseUrl: '',
             httpBaseUrl: '',
             rateStatus: 'EUR/USD',
@@ -311,11 +309,12 @@ export default {
             pageIndex2: '1',
             timer: null,
             predictStatus: true,
+            catchItem: 'Eur'
         }
     },
     created() {
-        // const URL = '172.16.100.169:8080';
-        const URL = 'localhost:8080';
+        const URL = '172.16.100.169:8080';
+        // const URL = 'localhost:8080';
         this.baseUrl = `ws:${URL}`;
         this.httpBaseUrl = `http://${URL}`;
         // 启动咨询信息定时器
@@ -338,7 +337,7 @@ export default {
             }
             const that = this;
             axios({
-                url: `${this.httpBaseUrl}/trans?id=${item.id}`,
+                url: `${this.httpBaseUrl}/trans?id=${item.idStr}`,
                 method: 'get',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -396,7 +395,15 @@ export default {
                         this[type].rate = ((data.last - data.close) / data.close).toFixed(4);
                         this[type].ratePrecent = `${(((data.last - data.close) / data.close) * 100).toFixed(2)}%`;
                     }
+                    localStorage.setItem(type, JSON.stringify(this[type]));
+                } else {
+                    const catchData = localStorage.getItem(type) || '{}';
+                    this[type] = JSON.parse(catchData);
                 }
+            }
+            ws.onerror = (error) => {
+                const catchData = localStorage.getItem(type) || '{}';
+                this[type] = JSON.parse(catchData);
             }
         },
         // 获取统计信息
@@ -596,16 +603,26 @@ export default {
                 this.timelineStatus = false;
             }
             this.wsNews.onmessage = (res) => {
+                this.timelineStatus = false;
                 if (res.data !== 'pong') {
-                    this.timelineStatus = false;
-                    this.handleNewsData(res);
+                    if (JSON.parse(res.data).timeList instanceof Array && JSON.parse(res.data).timeList.length > 0) {
+                        this.handleNewsData(res);
+                    } else {
+                        // 返回异常，取缓存数据渲染页面
+                        const newsList = localStorage.getItem('newsList') || '[]';
+                        that.timeList = JSON.parse(newsList);
+                    }
                 }
             }
             this.wsNews.onclose = () => {
                 clearInterval(this.timer);
             }
             this.wsNews.onerror = () => {
+                // 请求失败，接口出现异常，取缓存数据渲染页面
                 clearInterval(this.timer);
+                this.timelineStatus = false;
+                const newsList = localStorage.getItem('newsList') || '[]';
+                that.timeList = JSON.parse(newsList);
             }
         },
         // 处理新闻数据
@@ -613,37 +630,37 @@ export default {
             const that = this;
             this.newsStatus = true;
             this.timelineStatus = false;
-            if (JSON.parse(res.data).timeList instanceof Array) {
-                that.timeList = JSON.parse(res.data).timeList;
-                that.timeList.map((item) => {
-                    item.fmtime = this.reGroup(item.timestamp);
-                    if (that.moneyValue === '贵金属') {
-                        item.label = item.gold.label;
-                    } else {
-                        item.label = item.forex.label;
-                    }
-                    if (item.label === '看涨') {
-                        that.reverseStatus === true ? item.label = '看跌' : item.label = '看涨'
-                        that.reverseStatus === true ? item.color = '#1AC998' : item.color = '#F25C62';
-                    } else if (item.label === '看跌') {
-                        that.reverseStatus === true ? item.label = '看涨' : item.label = '看跌'
-                        that.reverseStatus === true ? item.color = '#F25C62' : item.color = '#1AC998';
-                    }
-                })
-                const newData = [];
-                const timeAsse = [];
-                for (let i = 0; i < that.timeList.length; i++) {
-                    if (timeAsse.indexOf(that.timeList[i].fmtime) === -1) {
-                        newData.push(that.timeList[i]);
-                        timeAsse.push(that.timeList[i].fmtime);
-                    } else {
-                        if (that.timeList[timeAsse.indexOf(that.timeList[i].fmtime)].score < that.timeList[i].score) {
-                            newData[timeAsse.indexOf(that.timeList[i].fmtime)] = that.timeList[i];
-                        }
+            that.timeList = JSON.parse(res.data).timeList;
+            that.timeList.map((item) => {
+                item.fmtime = this.reGroup(item.timestamp);
+                if (that.moneyValue === '贵金属') {
+                    item.label = item.gold.label;
+                } else {
+                    item.label = item.forex.label;
+                }
+                if (item.label === '看涨') {
+                    that.reverseStatus === true ? item.label = '看跌' : item.label = '看涨'
+                    that.reverseStatus === true ? item.color = '#1AC998' : item.color = '#F25C62';
+                } else if (item.label === '看跌') {
+                    that.reverseStatus === true ? item.label = '看涨' : item.label = '看跌'
+                    that.reverseStatus === true ? item.color = '#F25C62' : item.color = '#1AC998';
+                }
+            })
+            const newData = [];
+            const timeAsse = [];
+            for (let i = 0; i < that.timeList.length; i++) {
+                if (timeAsse.indexOf(that.timeList[i].fmtime) === -1) {
+                    newData.push(that.timeList[i]);
+                    timeAsse.push(that.timeList[i].fmtime);
+                } else {
+                    if (that.timeList[timeAsse.indexOf(that.timeList[i].fmtime)].score < that.timeList[i].score) {
+                        newData[timeAsse.indexOf(that.timeList[i].fmtime)] = that.timeList[i];
                     }
                 }
-                that.timeList = newData;
             }
+            that.timeList = newData;
+            // catch 数据，供接口、服务异常渲染页面
+            localStorage.setItem('newsList', JSON.stringify(newData));
         },
         // 获取k线数据
         updateIK() {
@@ -657,53 +674,63 @@ export default {
             }
             this.wsK.onmessage = (res) => {
                 const data = JSON.parse(res.data);
-                const item = [];
-                item.push(data.time);
-                item.push(data.open);
-                item.push(data.close);
-                item.push(data.low);
-                item.push(data.high);
-                that.kData.push(item);
-                that.noticeList = [];
-                for (let i = 0; i < that.timeList.length; i++) {
-                    for (let j = 0; j < that.kData.length; j++) {
-                        if (that.timeList[i].fmtime === that.kData[j][0]) {
-                            const temp = [];
-                            temp.push(that.timeList[i].fmtime);
-                            temp.push(that.kData[j][2]);
-                            let color = '';
-                            let bubble = '';
-                            const newBubble = {
-                                name: that.timeList[i].txt.substring(0,20),
-                                coord: temp,
-                                value: bubble,
-                                itemStyle: {
-                                    normal: { color }
+                if (data instanceof Object || res.data !== '{}') {
+                    const item = [];
+                    item.push(data.time);
+                    item.push(data.open);
+                    item.push(data.close);
+                    item.push(data.low);
+                    item.push(data.high);
+                    that.kData.push(item);
+                    that.noticeList = [];
+                    for (let i = 0; i < that.timeList.length; i++) {
+                        for (let j = 0; j < that.kData.length; j++) {
+                            if (that.timeList[i].fmtime === that.kData[j][0]) {
+                                const temp = [];
+                                temp.push(that.timeList[i].fmtime);
+                                temp.push(that.kData[j][2]);
+                                let color = '';
+                                let bubble = '';
+                                const newBubble = {
+                                    name: that.timeList[i].txt.substring(0,20),
+                                    coord: temp,
+                                    value: bubble,
+                                    itemStyle: {
+                                        normal: { color }
+                                    }
                                 }
-                            }
-                            if (that.timeList[i].label === '看涨') {
-                                newBubble.value = '涨';
-                                newBubble.itemStyle.normal.color = that.timeList[i].color;
-                                that.noticeList.push(newBubble);
-                            } else if (that.timeList[i].label === '看跌') {
-                                newBubble.value = '跌';
-                                newBubble.itemStyle.normal.color = that.timeList[i].color;
-                                that.noticeList.push(newBubble);
+                                if (that.timeList[i].label === '看涨') {
+                                    newBubble.value = '涨';
+                                    newBubble.itemStyle.normal.color = that.timeList[i].color;
+                                    that.noticeList.push(newBubble);
+                                } else if (that.timeList[i].label === '看跌') {
+                                    newBubble.value = '跌';
+                                    newBubble.itemStyle.normal.color = that.timeList[i].color;
+                                    that.noticeList.push(newBubble);
+                                }
                             }
                         }
                     }
+                    // 1分钟，最多180笔数据，5分钟，最多36数据，10分钟，最多18笔数据；
+                    if (that.kData.length > that.maxKLength) {
+                        const limitKdata = that.kData.slice(0 - that.maxKLength);
+                        that.$set(that, 'kData', limitKdata);
+                    }
+                    // catch data,以便接口 error 或返回异常，供页面渲染
+                    localStorage.setItem(`kLine${this.catchItem}`, JSON.stringify(that.kData));
+                    localStorage.setItem(`bubble${this.catchItem}`, JSON.stringify(that.noticeList));
                 }
-                // 1分钟，最多180笔数据，5分钟，最多36数据，10分钟，最多18笔数据；
-                if (that.kData.length > that.maxKLength) {
-                    const limitKdata = that.kData.slice(0 - that.maxKLength);
-                    that.$set(that, 'kData', limitKdata);
-                }
-                console.log(that.kData);
+            },
+            this.wsK.onerror = (error) => {
+                // 请求错误，取catch 数据
+                const data = localStorage.getItem(`kLine${that.catchItem}`) || '[]';
+                const bubble = localStorage.getItem(`bubble${that.catchItem}`) || '[]';
+                that.$set(that, 'kData', JSON.parse(data));
+                that.$set(that, 'noticeList', JSON.parse(bubble));
             }
         },
         // 切换时间
         handleTimeChange(value) {
-            debugger;
             this.wsNews.close();
             this.wsK.close();
             if (value === '_5_mins') {
@@ -731,7 +758,6 @@ export default {
         },
         // 切换汇率类型
         handleRateChange(value) {
-            // TODO 暂时关闭这两个close
             // 断开新闻websocket 重新连接
             this.wsNews.close();
             this.wsK.close();
@@ -747,16 +773,24 @@ export default {
             this.updateNews();
             this.myChart.setOption(this.updateOptions());
             if (value === '贵金属') {
+                this.catchItem = 'Xau';
                 setTimeout(() => {
                     this.fetchHisK('/ws/xauhis');
                 }, 500)
                 
             } else if (value === '美元指数') {
+                this.catchItem = 'Dx';
                 setTimeout(() => {
                     this.fetchHisK('/ws/dxhis');
                 }, 500)
-            }else {
+            }else if (value === 'EUR/USD'){
+                this.catchItem = 'Eur';
                 // 重新获取新闻，因为反转信息发生变化
+                setTimeout(() => {
+                    this.updateIK();
+                }, 500)
+            } else {
+                this.catchItem = 'Usd';
                 setTimeout(() => {
                     this.updateIK();
                 }, 500)
@@ -767,54 +801,60 @@ export default {
             const that = this;
             const time = this.timeStatus;
             this.wsK = new WebSocket(`${this.baseUrl}${url}?&endDateTime=&duration=10800&durationUnit=SECOND&barSize=${time}&keepUpToDate=true`);
-            this.wsK.onerror = (error) => {
-                this.$message.error(error);
-            }
-            this.wsK.onopen = () => {
-                
-            }
             this.wsK.onmessage = (res) => {
                 const data = JSON.parse(res.data);
-                const item = [];
-                item.push(data.time);
-                item.push(data.open);
-                item.push(data.close);
-                item.push(data.low);
-                item.push(data.high);
-                that.kData.push(item);
-                for (let i = 0; i < that.timeList.length; i++) {
-                    for (let j = 0; j < that.kData.length; j++) {
-                        if (that.timeList[i].fmtime === that.kData[j][0]) {
-                            const temp = [];
-                            temp.push(that.timeList[i].fmtime);
-                            temp.push(that.kData[j][2]);
-                            let color = '';
-                            let bubble = '';
-                            const newBubble = {
-                                name: that.timeList[i].txt.substring(0,20),
-                                coord: temp,
-                                value: bubble,
-                                itemStyle: {
-                                    normal: { color }
+                if (data instanceof Object || res.data !== '{}') {
+                    const item = [];
+                    item.push(data.time);
+                    item.push(data.open);
+                    item.push(data.close);
+                    item.push(data.low);
+                    item.push(data.high);
+                    that.kData.push(item);
+                    for (let i = 0; i < that.timeList.length; i++) {
+                        for (let j = 0; j < that.kData.length; j++) {
+                            if (that.timeList[i].fmtime === that.kData[j][0]) {
+                                const temp = [];
+                                temp.push(that.timeList[i].fmtime);
+                                temp.push(that.kData[j][2]);
+                                let color = '';
+                                let bubble = '';
+                                const newBubble = {
+                                    name: that.timeList[i].txt.substring(0,20),
+                                    coord: temp,
+                                    value: bubble,
+                                    itemStyle: {
+                                        normal: { color }
+                                    }
                                 }
-                            }
-                            if (that.timeList[i].label === '看涨') {
-                                newBubble.value = '涨';
-                                newBubble.itemStyle.normal.color = that.timeList[i].color;
-                                that.noticeList.push(newBubble);
-                            } else if (that.timeList[i].label === '看跌') {
-                                newBubble.value = '跌';
-                                newBubble.itemStyle.normal.color = that.timeList[i].color;
-                                that.noticeList.push(newBubble);
+                                if (that.timeList[i].label === '看涨') {
+                                    newBubble.value = '涨';
+                                    newBubble.itemStyle.normal.color = that.timeList[i].color;
+                                    that.noticeList.push(newBubble);
+                                } else if (that.timeList[i].label === '看跌') {
+                                    newBubble.value = '跌';
+                                    newBubble.itemStyle.normal.color = that.timeList[i].color;
+                                    that.noticeList.push(newBubble);
+                                }
                             }
                         }
                     }
+                    // 1分钟，最多180笔数据，5分钟，最多36数据，10分钟，最多18笔数据；
+                    if (that.kData.length > that.maxKLength) {
+                        const limitKdata = that.kData.slice(0 - that.maxKLength);
+                        that.$set(that, 'kData', limitKdata);
+                    }
+                    // catch data,以便接口 error 或返回异常，供页面渲染
+                    localStorage.setItem(`kLine${that.catchItem}`, JSON.stringify(that.kData));
+                    localStorage.setItem(`bubble${that.catchItem}`, JSON.stringify(that.noticeList));
                 }
-                // 1分钟，最多180笔数据，5分钟，最多36数据，10分钟，最多18笔数据；
-                if (that.kData.length > that.maxKLength) {
-                    const limitKdata = that.kData.slice(0 - that.maxKLength);
-                    that.$set(that, 'kData', limitKdata);
-                }
+            }
+            this.wsK.onerror = (error) => {
+                // 请求错误，取catch 数据
+                const data = localStorage.getItem(`kLine${that.catchItem}`) || '[]';
+                const bubble = localStorage.getItem(`bubble${that.catchItem}`) || '[]';
+                that.$set(that, 'kData', JSON.parse(data));
+                that.$set(that, 'noticeList', JSON.parse(bubble));
             }
         },
         handleMouseenter() {
