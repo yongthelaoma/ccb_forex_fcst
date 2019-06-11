@@ -414,10 +414,13 @@ export default {
                 this.predictStatus = true;
             }
             ws.onmessage = (res) => {
-                this.predictStatus = false;
                 const data = JSON.parse(res.data);
                 if (data instanceof Array) {
                     this.predictList = data;
+                    localStorage.setItem('predict', res.data);
+                } else {
+                    const predictData = localStorage.getItem('predict') || '[]';
+                    this.predictList = JSON.parse(predictData);
                 }
             }
         },
@@ -612,6 +615,9 @@ export default {
                         const newsList = localStorage.getItem('newsList') || '[]';
                         that.timeList = JSON.parse(newsList);
                     }
+                } else {
+                    const newsList = localStorage.getItem('newsList') || '[]';
+                    that.timeList = JSON.parse(newsList);
                 }
             }
             this.wsNews.onclose = () => {
