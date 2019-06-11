@@ -615,7 +615,7 @@ export default {
             const that = this;
             this.newsStatus = true;
             this.timelineStatus = false;
-            that.timeList = JSON.parse(res.data).timeList;
+            that.timeList = JSON.parse(res.data).timeList.filter(item => item.txt !== '');
             that.timeList.map((item) => {
                 item.fmtime = this.reGroup(item.timestamp);
                 if (that.moneyValue === '贵金属') {
