@@ -395,15 +395,7 @@ export default {
                         this[type].rate = ((data.last - data.close) / data.close).toFixed(4);
                         this[type].ratePrecent = `${(((data.last - data.close) / data.close) * 100).toFixed(2)}%`;
                     }
-                    localStorage.setItem(type, JSON.stringify(this[type]));
-                } else {
-                    const catchData = localStorage.getItem(type) || '{}';
-                    this[type] = JSON.parse(catchData);
                 }
-            }
-            ws.onerror = (error) => {
-                const catchData = localStorage.getItem(type) || '{}';
-                this[type] = JSON.parse(catchData);
             }
         },
         // 获取统计信息
@@ -414,13 +406,10 @@ export default {
                 this.predictStatus = true;
             }
             ws.onmessage = (res) => {
+                this.predictStatus = false;
                 const data = JSON.parse(res.data);
                 if (data instanceof Array) {
                     this.predictList = data;
-                    localStorage.setItem('predict', res.data);
-                } else {
-                    const predictData = localStorage.getItem('predict') || '[]';
-                    this.predictList = JSON.parse(predictData);
                 }
             }
         },
@@ -610,14 +599,7 @@ export default {
                 if (res.data !== 'pong') {
                     if (JSON.parse(res.data).timeList instanceof Array && JSON.parse(res.data).timeList.length > 0) {
                         this.handleNewsData(res);
-                    } else {
-                        // 返回异常，取缓存数据渲染页面
-                        const newsList = localStorage.getItem('newsList') || '[]';
-                        that.timeList = JSON.parse(newsList);
                     }
-                } else {
-                    const newsList = localStorage.getItem('newsList') || '[]';
-                    that.timeList = JSON.parse(newsList);
                 }
             }
             this.wsNews.onclose = () => {
@@ -626,9 +608,6 @@ export default {
             this.wsNews.onerror = () => {
                 // 请求失败，接口出现异常，取缓存数据渲染页面
                 clearInterval(this.timer);
-                this.timelineStatus = false;
-                const newsList = localStorage.getItem('newsList') || '[]';
-                that.timeList = JSON.parse(newsList);
             }
         },
         // 处理新闻数据
@@ -665,8 +644,6 @@ export default {
                 }
             }
             that.timeList = newData;
-            // catch 数据，供接口、服务异常渲染页面
-            localStorage.setItem('newsList', JSON.stringify(newData));
         },
         // 获取k线数据
         updateIK() {
@@ -722,17 +699,7 @@ export default {
                         const limitKdata = that.kData.slice(0 - that.maxKLength);
                         that.$set(that, 'kData', limitKdata);
                     }
-                    // catch data,以便接口 error 或返回异常，供页面渲染
-                    localStorage.setItem(`kLine${this.catchItem}`, JSON.stringify(that.kData));
-                    localStorage.setItem(`bubble${this.catchItem}`, JSON.stringify(that.noticeList));
                 }
-            },
-            this.wsK.onerror = (error) => {
-                // 请求错误，取catch 数据
-                const data = localStorage.getItem(`kLine${that.catchItem}`) || '[]';
-                const bubble = localStorage.getItem(`bubble${that.catchItem}`) || '[]';
-                that.$set(that, 'kData', JSON.parse(data));
-                that.$set(that, 'noticeList', JSON.parse(bubble));
             }
         },
         // 切换时间
@@ -779,24 +746,15 @@ export default {
             this.updateNews();
             this.myChart.setOption(this.updateOptions());
             if (value === '贵金属') {
-                this.catchItem = 'Xau';
                 setTimeout(() => {
                     this.fetchHisK('/ws/xauhis');
                 }, 500)
                 
             } else if (value === '美元指数') {
-                this.catchItem = 'Dx';
                 setTimeout(() => {
                     this.fetchHisK('/ws/dxhis');
                 }, 500)
-            }else if (value === 'EUR/USD'){
-                this.catchItem = 'Eur';
-                // 重新获取新闻，因为反转信息发生变化
-                setTimeout(() => {
-                    this.updateIK();
-                }, 500)
             } else {
-                this.catchItem = 'Usd';
                 setTimeout(() => {
                     this.updateIK();
                 }, 500)
@@ -850,17 +808,7 @@ export default {
                         const limitKdata = that.kData.slice(0 - that.maxKLength);
                         that.$set(that, 'kData', limitKdata);
                     }
-                    // catch data,以便接口 error 或返回异常，供页面渲染
-                    localStorage.setItem(`kLine${that.catchItem}`, JSON.stringify(that.kData));
-                    localStorage.setItem(`bubble${that.catchItem}`, JSON.stringify(that.noticeList));
                 }
-            }
-            this.wsK.onerror = (error) => {
-                // 请求错误，取catch 数据
-                const data = localStorage.getItem(`kLine${that.catchItem}`) || '[]';
-                const bubble = localStorage.getItem(`bubble${that.catchItem}`) || '[]';
-                that.$set(that, 'kData', JSON.parse(data));
-                that.$set(that, 'noticeList', JSON.parse(bubble));
             }
         },
         handleMouseenter() {
