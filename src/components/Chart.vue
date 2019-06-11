@@ -314,7 +314,9 @@ export default {
     },
     created() {
         // const URL = '172.16.100.169:8080';
-        const URL = 'localhost:8080';
+        // const URL = 'localhost:8080';
+        const URL = process.env.API_ROOT;
+        console.log(URL);
         this.baseUrl = `ws:${URL}`;
         this.httpBaseUrl = `http://${URL}`;
         // 启动咨询信息定时器
