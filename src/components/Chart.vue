@@ -716,8 +716,12 @@ export default {
         },
         // 切换时间
         handleTimeChange(value) {
-            this.wsNews.close();
-            this.wsK.close();
+            // 如果时间没有变，不更新页面
+            if (this.timeStatus === value) {
+                return;
+            }
+            this.wsNews && this.wsNews.close();
+            this.wsK && this.wsK.close();
             if (value === '_5_mins') {
                 this.timeGape = 5;
                 this.maxKLength = 36;
