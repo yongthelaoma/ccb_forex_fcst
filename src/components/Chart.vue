@@ -132,8 +132,8 @@
                             :timestamp="item.timestamp">
                                 <el-card>
                                     <p>
-                                    <i v-if="item.label === '横盘'" class="el-icon-caret-right">【{{item.label}}】</i>
-                                    <i v-if="item.label !== '横盘'" :class="{'el-icon-caret-top': item.label === '看涨', 'el-icon-caret-bottom': item.label === '看跌'}">【{{item.label}}】</i>
+                                    <i v-if="item.label === '横盘'" class="el-icon-caret-right">【{{item.label === "横盘" ? 'neutral' : item.label}}】</i>
+                                    <i v-if="item.label !== '横盘'" :class="{'el-icon-caret-top': item.label === 'up', 'el-icon-caret-bottom': item.label === 'down'}">【{{item.label}}】</i>
                                     {{item.txt}}
                                     </p>
                                     <p class="line" v-if="item.dst"></p>
@@ -149,7 +149,9 @@
                         <basic-loading v-show="predictStatus"></basic-loading>
                         <p>Statistics Of Prediction</p>
                         <li v-for="(item, index) in predictList" :key="index">
-                            <span>{{item.date}}</span>
+                            <span v-if="index === 0">previous trading day</span>
+                            <span v-if="index === 1">last 5 trading days</span>
+                            <span v-if="index === 2">last 30 trading days</span>
                             <span>Accuracy Rate:{{item.rate}}%</span>
                             <span>Correct:{{item.post}} Wrong:{{item.neg}}，Total:{{item.total}}</span>
                         </li>
@@ -628,10 +630,10 @@ export default {
                     item.label = item.forex.label;
                 }
                 if (item.label === '看涨') {
-                    that.reverseStatus === true ? item.label = '看跌' : item.label = '看涨'
+                    that.reverseStatus === true ? item.label = 'down' : item.label = 'up'
                     that.reverseStatus === true ? item.color = '#1AC998' : item.color = '#F25C62';
                 } else if (item.label === '看跌') {
-                    that.reverseStatus === true ? item.label = '看涨' : item.label = '看跌'
+                    that.reverseStatus === true ? item.label = 'up' : item.label = 'down'
                     that.reverseStatus === true ? item.color = '#F25C62' : item.color = '#1AC998';
                 }
             })
@@ -686,11 +688,11 @@ export default {
                                         normal: { color }
                                     }
                                 }
-                                if (that.timeList[i].label === '看涨') {
+                                if (that.timeList[i].label === 'up') {
                                     newBubble.value = 'up';
                                     newBubble.itemStyle.normal.color = that.timeList[i].color;
                                     that.noticeList.push(newBubble);
-                                } else if (that.timeList[i].label === '看跌') {
+                                } else if (that.timeList[i].label === 'down') {
                                     newBubble.value = 'down';
                                     newBubble.itemStyle.normal.color = that.timeList[i].color;
                                     that.noticeList.push(newBubble);
@@ -795,11 +797,11 @@ export default {
                                         normal: { color }
                                     }
                                 }
-                                if (that.timeList[i].label === '看涨') {
+                                if (that.timeList[i].label === 'up') {
                                     newBubble.value = 'up';
                                     newBubble.itemStyle.normal.color = that.timeList[i].color;
                                     that.noticeList.push(newBubble);
-                                } else if (that.timeList[i].label === '看跌') {
+                                } else if (that.timeList[i].label === 'down') {
                                     newBubble.value = 'down';
                                     newBubble.itemStyle.normal.color = that.timeList[i].color;
                                     that.noticeList.push(newBubble);
@@ -1379,7 +1381,7 @@ export default {
                     display: inline-block;
                     &:first-child{
                         color:#ffffff;
-                        width: 80px;
+                        width: 120px;
                     }
                     &:nth-child(2){
                         color:rgba(216,247,255,1);
