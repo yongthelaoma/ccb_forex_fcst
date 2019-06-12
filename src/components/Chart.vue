@@ -666,6 +666,10 @@ export default {
             this.wsK.onmessage = (res) => {
                 const data = JSON.parse(res.data);
                 if (data instanceof Object || res.data !== '{}') {
+                    const dup = that.kData.filter(item => item[0] === data.time);
+                    if (dup.length > 0) {
+                        return;
+                    }
                     const item = [];
                     item.push(data.time);
                     item.push(data.open);
@@ -740,8 +744,8 @@ export default {
         // 切换汇率类型
         handleRateChange(value) {
             // 断开新闻websocket 重新连接
-            this.wsNews.close();
-            this.wsK.close();
+            this.wsNews && this.wsNews.close();
+            this.wsK && this.wsK.close();
             clearInterval(this.timer);
             // EUR/USD 贵金属 需要反转
             if (value === 'EUR/USD' || value === 'Gold') {
@@ -776,6 +780,10 @@ export default {
             this.wsK.onmessage = (res) => {
                 const data = JSON.parse(res.data);
                 if (data instanceof Object || res.data !== '{}') {
+                    const dup = that.kData.filter(item => item[0] === data.time);
+                    if (dup.length > 0) {
+                        return;
+                    }
                     const item = [];
                     item.push(data.time);
                     item.push(data.open);
@@ -816,6 +824,7 @@ export default {
                         const limitKdata = that.kData.slice(0 - that.maxKLength);
                         that.$set(that, 'kData', limitKdata);
                     }
+                    console.log(that.kData);
                 }
             }
         },
