@@ -19,14 +19,14 @@
                                     <span class="result" :class="{'down': usdjpy.rate < 0, 'up': usdjpy.rate > 0}">{{usdjpy.rate > 0 ? '+' : ''}}{{usdjpy.rate}}</span>
                                 </div>
                             </template>
-                            <template v-if="moneyValue === '贵金属'">
+                            <template v-if="moneyValue === 'Gold'">
                                 <div class="box-item-top">
                                     <span class="title-one">{{moneyValue}}</span>
                                     <span class="title-one">{{xau.bid}}</span>
                                     <span class="result" :class="{'down': xau.rate < 0, 'up': xau.rate > 0}">{{xau.rate > 0 ? '+' : ''}}{{xau.rate}}</span>
                                 </div>
                             </template>
-                            <template v-if="moneyValue === '美元指数'">
+                            <template v-if="moneyValue === 'DXY'">
                                 <div class="box-item-top">
                                     <span class="title-one">{{moneyValue}}</span>
                                     <span class="title-one">{{dx.last}}</span>
@@ -34,7 +34,7 @@
                                 </div>
                             </template>
                         </div>
-                        <div class="head-right">  
+                        <div class="head-right">
                             <el-select v-model="timeValue" placeholder="请选择" @change="handleTimeChange">
                                 <el-option
                                 size="mini"
@@ -58,10 +58,10 @@
                     <div class="indicate-box">
                         <ul class="indicate">
                             <li>
-                                <img src="../assets/images/predict-up.png">涨
+                                <img src="../assets/images/predict-up.png">up
                             </li>
                             <li>
-                                <img src="../assets/images/predict-down.png">跌
+                                <img src="../assets/images/predict-down.png">down
                             </li>
                             <!-- <li>
                                 <img src="../assets/images/predict-wrong.png">错
@@ -73,45 +73,45 @@
                     </div>
                 </div>
                 <div  class="charts-controls">
-                    <p class="rate-title">实时行情</p>
+                    <p class="rate-title">Real-Time Quotes</p>
                     <ul class="ul-item">
                         <li>
                            <div class="li-item-top">
-                               <p class="rate-name">美元/日元</p>
+                               <p class="rate-name">USD/JPY</p>
                                <p class="rate-res"><span class="res">{{usdjpy.bid}}</span><i :class="{'el-icon-caret-top': usdjpy.rate > 0, 'el-icon-caret-bottom': usdjpy.rate < 0}"></i><i :class="{'blue': usdjpy.rate < 0, 'red': usdjpy.rate > 0}">{{usdjpy.ratePrecent > 0 ? '+' : ''}}{{usdjpy.ratePrecent}}</i></p>
                                <span>{{usdjpy.rate > 0 ? '+' : ''}}{{usdjpy.rate}}</span>
                            </div>
                            <div class="li-item-bottom">
-                               <span>高 <i>{{usdjpy.high}}</i></span>
-                               <span>开 <i>{{usdjpy.open}}</i></span>
-                               <span>低 <i>{{usdjpy.low}}</i></span>
-                               <span>收 <i>{{usdjpy.close}}</i></span>
+                               <span>High <i>{{usdjpy.high}}</i></span>
+                               <span>Open <i>{{usdjpy.open}}</i></span>
+                               <span>Low <i>{{usdjpy.low}}</i></span>
+                               <span>Close <i>{{usdjpy.close}}</i></span>
                            </div>
                         </li>
                         <li>
                            <div class="li-item-top">
-                               <p class="rate-name">美元指数</p>
+                               <p class="rate-name">U.S.Dollar Index(DXY) </p>
                                <p class="rate-res"><span class="res">{{dx.last}}</span><i :class="{'el-icon-caret-top': dx.rate > 0, 'el-icon-caret-bottom': dx.rate < 0}"></i><i :class="{'blue': dx.rate < 0, 'red': dx.rate > 0}">{{dx.ratePrecent > 0 ? '+' : ''}}{{dx.ratePrecent}}</i></p>
                                <span>{{dx.rate > 0 ? '+' : ''}}{{dx.rate}}</span>
                            </div>
                            <div class="li-item-bottom">
-                               <span>高 <i>{{dx.high}}</i></span>
-                               <span>开 <i>{{dx.open}}</i></span>
-                               <span>低 <i>{{dx.low}}</i></span>
-                               <span>收 <i>{{dx.close}}</i></span>
+                               <span>High <i>{{dx.high}}</i></span>
+                               <span>Open <i>{{dx.open}}</i></span>
+                               <span>Low <i>{{dx.low}}</i></span>
+                               <span>Close <i>{{dx.close}}</i></span>
                            </div>
                         </li>
                         <li>
                            <div class="li-item-top">
-                               <p class="rate-name">黄金</p>
+                               <p class="rate-name">Gold</p>
                                <p class="rate-res"><span class="res">{{xau.bid}}</span><i :class="{'el-icon-caret-top': xau.rate > 0, 'el-icon-caret-bottom': xau.rate < 0}"></i><i :class="{'blue': xau.rate < 0, 'red': xau.rate > 0}">{{xau.ratePrecent > 0 ? '+' : ''}}{{xau.ratePrecent}}</i></p>
                                <span>{{xau.rate > 0 ? '+' : ''}}{{xau.rate}}</span>
                            </div>
                            <div class="li-item-bottom">
-                               <span>高 <i>{{xau.high}}</i></span>
-                               <span>开 <i>{{xau.open}}</i></span>
-                               <span>低 <i>{{xau.low}}</i></span>
-                               <span>收 <i>{{xau.close}}</i></span>
+                               <span>High <i>{{xau.high}}</i></span>
+                               <span>Open <i>{{xau.open}}</i></span>
+                               <span>Low <i>{{xau.low}}</i></span>
+                               <span>Close <i>{{xau.close}}</i></span>
                            </div>
                         </li>
                     </ul>
@@ -120,7 +120,7 @@
             <div class="time-line-container">
                 <div class="right-top-container">
                     <div class="top-title">
-                        <span>资讯信息</span>
+                        <span>Financial News</span>
                         <span>{{currentTime}}</span>
                     </div>
                     <div class="k-time-line" id="kTimeLine">
@@ -147,11 +147,11 @@
                  <div class="predict">
                     <ul>
                         <basic-loading v-show="predictStatus"></basic-loading>
-                        <p>预测统计</p>
+                        <p>Statistics Of Prediction</p>
                         <li v-for="(item, index) in predictList" :key="index">
                             <span>{{item.date}}</span>
-                            <span>准确率{{item.rate}}%</span>
-                            <span>正确{{item.post}}个 错误{{item.neg}}个，共{{item.total}}个</span>
+                            <span>Accuracy Rate:{{item.rate}}%</span>
+                            <span>Correct:{{item.post}} Wrong:{{item.neg}}，Total:{{item.total}}</span>
                         </li>
                     </ul>
                  </div>
@@ -165,26 +165,28 @@
                 active-text-color="#ffffff"
                 @select="handelSelet"
                 text-color="#fff">
+
                 <el-menu-item index="1">
-                    <span slot="title">产品介绍</span>
-                </el-menu-item>
-                <el-menu-item index="2">
                     <span slot="title">Product Description</span>
                 </el-menu-item>
+                <el-menu-item index="2">
+                    <span slot="title">产品介绍</span>
+                </el-menu-item>
                 <el-menu-item index="3">
-                    <span slot="title">视图说明</span>
+                    <span slot="title">Illustration</span>
                 </el-menu-item>
             </el-menu>
             <div class="container-pages">
+
                 <div class="page-item" v-show="pageIndex === '1'">
-                    <p class="paragraph">金融科技创新是建设银行的重要战略，也是银行科技化、智能化转型的关键。建设银行一向重视人工智能等前沿技术的发展和应用，善于结合自身业务打造出创新型的产品。本次金融市场研发的，基于财经资讯实时预测市场走势的智能机器人Alpha-X就是创新成果之一。</p>
-                    <p class="paragraph">Alpha-X基于自然语言理解和情绪分析模型，通过深度学习原理使机器人掌握历史数据分析，对比市场规律，最终达到根据实时资讯预测k线走势的效果。训练数据囊括了外汇、股票、贵金属、美元指数等几大市场，超过100万条分时k线数据以及50万条财经资讯分析、标注后提供给TensorFlow、Bert等机器学习和深度学习框架，达成对机器人的训练和调优。该产品为广大市场交易人员、散户投资者以及金融市场相关从业人员、甚至学术分析机构等提供了一个强大、成熟、智能的实时交易分析平台，利用该平台可以极大地减少分析工作量，在纷繁复杂的海量实时资讯中，快速有效地抓取关键信息并做出有历史依据的涨跌趋势预测，更高效、智能地辅助交易者作出理性判断，降低交易风险，提高收益率以及对交易对手的胜率。</p>
-                    <p class="paragraph">当前版本的Alpha-X已经支持从外汇、股票、贵金属、到美元指数等几大国内外金融市场的K线预测；其中外汇交易支持欧元/美元、美元/日元、英镑/美元、美元/加币、澳元/美元等多种货币对；股票支持上证指数和深证成指；贵金属支持黄金等品种，之后产品将加入金融市场更多细分领域和相应数据，同时增加研究报告生成、分析结果对比、智能问答等闭环功能。本次游戏将通过趣味性地评测观众的投资潜能，让大家体验和感受Alpha-X的能力和魅力。</p>
-                </div>
-                <div class="page-item" v-show="pageIndex === '2'">
                     <p class="paragraph">Fin-tech innovation is an important strategy of the China Construction Bank, and also the key to the transformation of the banking technology and intelligence. China Construction Bank has always attached great importance to the development and application of advanced technology such as AI, and is good at combining its own business to create innovative products. The intelligent robot Alpha-X, which is based on financial information to predict the market trend in real time, is one of the innovative achievements of Fin-Tech.</p>
                     <p class="paragraph">Alpha-X is based on natural language understanding(NLU) and emotional analysis model. Through deep learning principle, the robot can master historical data analysis and compare market rules. Finally, it can predict the trend of Candlestick chart based on real-time information. Training data include foreign exchange, stock, precious metals, dollar index and other major markets. More than 1 million historical Candlestick chart data and 500,000 financial information analysis, labeling and feeding to TensorFlow, Bert and other machine learning and in-depth learning frameworks to achieve the training and optimization of robots. This product provides a powerful, advanced and intelligent real-time trading analysis platform for market traders, retail investors, financial market practitioners, and even academic analysis institutions. Using this platform, the analysis workload can be greatly reduced. In the complex mass of real-time information, the key information can be quickly and effectively grasped and trend prediction can be made based on historical data. Prediction of declining trend can help traders make rational judgments more efficiently and intelligently, reduce transaction risk, increase profit and win rate to counterparties.</p>
                     <p class="paragraph">The current version of Alpha-X has supported Candlestick chart forecasts in domestic and foreign financial markets from foreign exchange, stocks, precious metals, to the dollar index; foreign exchange transactions support EUR/USD, USD/JPY, GBP/USD, USD/CAD, AUD/USD and other currency pairs; stocks support Shanghai Stock Index and Shenzhen Stock Exchange Index; precious metals support gold and other products, after which more market data and products will be added. More functions, such as research report generation, analysis results comparison, intelligent question-and-answer and so on will be added into this product. By interestingly evaluating the audience's investment potential, this game will let you experience and feel the ability and charm of Alpha-X.</p>
+                </div>
+                <div class="page-item" v-show="pageIndex === '2'">
+                    <p class="paragraph">金融科技创新是建设银行的重要战略，也是银行科技化、智能化转型的关键。建设银行一向重视人工智能等前沿技术的发展和应用，善于结合自身业务打造出创新型的产品。本次金融市场研发的，基于财经资讯实时预测市场走势的智能机器人Alpha-X就是创新成果之一。</p>
+                    <p class="paragraph">Alpha-X基于自然语言理解和情绪分析模型，通过深度学习原理使机器人掌握历史数据分析，对比市场规律，最终达到根据实时资讯预测k线走势的效果。训练数据囊括了外汇、股票、贵金属、美元指数等几大市场，超过100万条分时k线数据以及50万条财经资讯分析、标注后提供给TensorFlow、Bert等机器学习和深度学习框架，达成对机器人的训练和调优。该产品为广大市场交易人员、散户投资者以及金融市场相关从业人员、甚至学术分析机构等提供了一个强大、成熟、智能的实时交易分析平台，利用该平台可以极大地减少分析工作量，在纷繁复杂的海量实时资讯中，快速有效地抓取关键信息并做出有历史依据的涨跌趋势预测，更高效、智能地辅助交易者作出理性判断，降低交易风险，提高收益率以及对交易对手的胜率。</p>
+                    <p class="paragraph">当前版本的Alpha-X已经支持从外汇、股票、贵金属、到美元指数等几大国内外金融市场的K线预测；其中外汇交易支持欧元/美元、美元/日元、英镑/美元、美元/加币、澳元/美元等多种货币对；股票支持上证指数和深证成指；贵金属支持黄金等品种，之后产品将加入金融市场更多细分领域和相应数据，同时增加研究报告生成、分析结果对比、智能问答等闭环功能。本次游戏将通过趣味性地评测观众的投资潜能，让大家体验和感受Alpha-X的能力和魅力。</p>
                 </div>
                 <div class="page-item img-item" v-show="pageIndex === '3'">
                     <img src="../assets/images/reason.png">
@@ -200,23 +202,23 @@
                 @select="handelSelet2"
                 text-color="#fff">
                 <el-menu-item index="1">
-                    <span slot="title">原理介绍</span>
-                </el-menu-item>
-                <el-menu-item index="2">
                     <span slot="title">Algorithm Instruction</span>
                 </el-menu-item>
+                <el-menu-item index="2">
+                    <span slot="title">原理介绍</span>
+                </el-menu-item>
                 <el-menu-item index="3">
-                    <span slot="title">视图说明</span>
+                    <span slot="title">Illustration</span>
                 </el-menu-item>
             </el-menu>
             <div class="container-pages">
                 <div class="page-item" v-show="pageIndex2 === '1'">
-                    <p class="paragraph">本产品利用自然语言理解和深度学习技术对新闻事件对于行情走势的影响进行判断，从而辅助交易决策。对实时新闻事件的Aspect级别的情感分析技术是其中决策的依据。基于aspect的情感分析指的是挖掘篇章中涉及的aspect（即影响的方面），以及对每个aspect表现出来的情感。现有的工作一般把这个任务分成两个部分：aspect识别，可以是aspect term提取或者aspect分类；aspect的情感识别。aspect term提取指的是从原文本中直接提取涉及到的aspect的单词或词组，而aspect分类指的是为每个领域预定义aspect种类，然后对每个句子进行分类（可以属于一个或多个aspect，也可以不属于任何aspect）。</p>
-                    <p class="paragraph">深度学习和词嵌入的技术突破为较为准确的aspect级别的情感分析提供了基础。使用神经网络的 aspect level 情感分类有三个重要任务。第一个任务是表示目标的语境词。该问题使用分布式的语义表示（如word2vec）来解决。第二个任务是生成目标表示，其可与语境词进行恰当地互动。通常的解决方案是学习目标嵌入（与词嵌入类似）。第三个任务是识别特定目标的重要情感语境词，这通常采用基于注意力的循环神经网络来实现。因此，设计了CNN-Bi-LSTM with Attention的神经网络，针对历史新闻事件与行情的关系，训练了行情走势信号模型。</p>
-                </div>
-                <div class="page-item" v-show="pageIndex2 === '2'">
                     <p class="paragraph">This product uses natural language understanding and deep learning technology to predict the impact of financial news events, and assist users to make trading decisions. Aspect-level sentiment analysis technology for real-time news events is the basis of trading decision-making.Aspect-based sentiment analysis refers to extracting the aspects involved in the text (that is, the area of impact), and the sentiments expressed by each aspect. This task can be divided into two parts: aspect recognition, which can be aspect extraction or aspect classification, and sentiment analysis of the aspect. Aspect term extraction refers to the direct extraction of the words or phrases involved in an aspect from the original text. Aspect classification refers to predefining the category of an aspect for each domain, and then classifying each sentence (which may or may not belong to one or more aspects).</p>
                     <p class="paragraph">The breakthroughs in deep learning and word embedding provide a basis for accurate emotional analysis at the aspect level. There are three important tasks in aspect level sentiment classification using neural networks. The first task is to express the target context words. This problem is solved by using distributed semantic representation (such as Word2vec). The second task is to generate target representations, which can interact properly with contextual words. The usual solution is learning goal embedding (similar to word embedding). The third task is to identify the important sentimental context words of a specific target, which is usually realized by the attention-based cyclic neural network. Therefore, the CNN-Bi-LSTM with Attention neural network is designed according to the relationship between historical news events and market, the market trend signal model is trained.</p>
+                </div>
+                <div class="page-item" v-show="pageIndex2 === '2'">
+                    <p class="paragraph">本产品利用自然语言理解和深度学习技术对新闻事件对于行情走势的影响进行判断，从而辅助交易决策。对实时新闻事件的Aspect级别的情感分析技术是其中决策的依据。基于aspect的情感分析指的是挖掘篇章中涉及的aspect（即影响的方面），以及对每个aspect表现出来的情感。现有的工作一般把这个任务分成两个部分：aspect识别，可以是aspect term提取或者aspect分类；aspect的情感识别。aspect term提取指的是从原文本中直接提取涉及到的aspect的单词或词组，而aspect分类指的是为每个领域预定义aspect种类，然后对每个句子进行分类（可以属于一个或多个aspect，也可以不属于任何aspect）。</p>
+                    <p class="paragraph">深度学习和词嵌入的技术突破为较为准确的aspect级别的情感分析提供了基础。使用神经网络的 aspect level 情感分类有三个重要任务。第一个任务是表示目标的语境词。该问题使用分布式的语义表示（如word2vec）来解决。第二个任务是生成目标表示，其可与语境词进行恰当地互动。通常的解决方案是学习目标嵌入（与词嵌入类似）。第三个任务是识别特定目标的重要情感语境词，这通常采用基于注意力的循环神经网络来实现。因此，设计了CNN-Bi-LSTM with Attention的神经网络，针对历史新闻事件与行情的关系，训练了行情走势信号模型。</p>
                 </div>
                 <div class="page-item img-item img-item-big" v-show="pageIndex2 === '3'">
                     <img src="../assets/images/product.png">
@@ -244,13 +246,13 @@ export default {
         return {
             timeOptions: [{
                 value: '_1_min',
-                label: '1分钟'
+                label: '1 min'
             },{
                 value: '_5_mins',
-                label: '5分钟'
+                label: '5 min'
             },{
                 value: '_10_mins',
-                label: '10分钟'
+                label: '10 min'
             }],
             typeOptions: [
                 {
@@ -261,15 +263,15 @@ export default {
                     label: 'USD/JPY'
                 }
                 ,{
-                    value: '美元指数',
-                    label: '美元指数'
+                    value: 'DXY',
+                    label: 'DXY'
                 },{
-                    value: '贵金属',
-                    label: '贵金属'
+                    value: 'Gold',
+                    label: 'Gold'
                 }
             ],
             timeList: [],
-            timeValue: '1分钟',
+            timeValue: '1 min',
             timelineStatus: true,
             moneyValue: 'EUR/USD',
             myChart: '',
@@ -288,7 +290,7 @@ export default {
             newsStatus: false,
             noticeList: [],
             predictList: [],
-            navList: ['财经事件监控', '产品说明', '原理说明'],
+            navList: ['Financial Event Monitor', 'Product Introduction', 'Technology Explanation'],
             activeIndex: 0,
             reverseStatus: true,
             timeOut: '',
@@ -521,7 +523,7 @@ export default {
                 series: [
                     {
                         type: 'candlestick',
-                        name: '日K',
+                        name: 'Candlestick',
                         data: data,
                         itemStyle: {
                             normal: {
@@ -620,7 +622,7 @@ export default {
             that.timeList = JSON.parse(res.data).timeList.filter(item => item.txt !== '');
             that.timeList.map((item) => {
                 item.fmtime = this.reGroup(item.timestamp);
-                if (that.moneyValue === '贵金属') {
+                if (that.moneyValue === 'Gold') {
                     item.label = item.gold.label;
                 } else {
                     item.label = item.forex.label;
@@ -685,11 +687,11 @@ export default {
                                     }
                                 }
                                 if (that.timeList[i].label === '看涨') {
-                                    newBubble.value = '涨';
+                                    newBubble.value = 'up';
                                     newBubble.itemStyle.normal.color = that.timeList[i].color;
                                     that.noticeList.push(newBubble);
                                 } else if (that.timeList[i].label === '看跌') {
-                                    newBubble.value = '跌';
+                                    newBubble.value = 'down';
                                     newBubble.itemStyle.normal.color = that.timeList[i].color;
                                     that.noticeList.push(newBubble);
                                 }
@@ -723,9 +725,9 @@ export default {
             this.kData = [];
             this.noticeList = [];
             this.updateNews();
-            if (this.moneyValue === '贵金属') {
+            if (this.moneyValue === 'Gold') {
                 this.fetchHisK('/ws/xauhis');
-            } else if (this.moneyValue === '美元指数') {
+            } else if (this.moneyValue === 'DXY') {
                 this.fetchHisK('/ws/dxhis');
             } else {
                 this.updateIK();
@@ -738,7 +740,7 @@ export default {
             this.wsK.close();
             clearInterval(this.timer);
             // EUR/USD 贵金属 需要反转
-            if (value === 'EUR/USD' || value === '贵金属') {
+            if (value === 'EUR/USD' || value === 'Gold') {
                 this.reverseStatus = true;
             } else {
                 this.reverseStatus = false;
@@ -747,12 +749,12 @@ export default {
             this.$set(this, 'noticeList', []);
             this.updateNews();
             this.myChart.setOption(this.updateOptions());
-            if (value === '贵金属') {
+            if (value === 'Gold') {
                 setTimeout(() => {
                     this.fetchHisK('/ws/xauhis');
                 }, 500)
-                
-            } else if (value === '美元指数') {
+
+            } else if (value === 'DXY') {
                 setTimeout(() => {
                     this.fetchHisK('/ws/dxhis');
                 }, 500)
@@ -794,11 +796,11 @@ export default {
                                     }
                                 }
                                 if (that.timeList[i].label === '看涨') {
-                                    newBubble.value = '涨';
+                                    newBubble.value = 'up';
                                     newBubble.itemStyle.normal.color = that.timeList[i].color;
                                     that.noticeList.push(newBubble);
                                 } else if (that.timeList[i].label === '看跌') {
-                                    newBubble.value = '跌';
+                                    newBubble.value = 'down';
                                     newBubble.itemStyle.normal.color = that.timeList[i].color;
                                     that.noticeList.push(newBubble);
                                 }
@@ -1081,7 +1083,7 @@ export default {
         }
         flex: 1;
         -webkit-box-flex: 1;
-        padding: 10px 20px; 
+        padding: 10px 20px;
         @include box-sizing(border-box);
         @include flex-box;
         flex-direction: row;
