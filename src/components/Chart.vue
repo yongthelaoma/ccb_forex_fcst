@@ -367,7 +367,9 @@ export default {
                 const month = date.getMonth() + 1 >= 10 ? date.getMonth() + 1 : `0${date.getMonth() + 1}`;
                 const ss = date.getSeconds() >= 10 ? date.getSeconds() : `0${date.getSeconds()}`;
                 const mm = date.getMinutes() >= 10 ? date.getMinutes() : `0${date.getMinutes()}`;
-                this.currentTime = `${month}月${date.getDate()}日 ${date.getHours()}:${mm}:${ss}`
+                // this.currentTime = `${month}/${date.getDate()} ${date.getHours()}:${mm}:${ss}`
+                const year = moment().format('LL');
+                this.currentTime = `${year}  ${date.getHours()}:${mm}:${ss}`
             }, 1000)
         },
         // 获取实时汇率三大块（美元/日元、黄金、美元指数）
