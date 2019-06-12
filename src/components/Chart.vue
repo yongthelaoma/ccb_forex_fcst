@@ -285,7 +285,7 @@ export default {
             newsStatus: false,
             noticeList: [],
             predictList: [],
-            navList: ['财经事件监控', '产品说明', '原来说明'],
+            navList: ['财经事件监控', '产品说明', '原理说明'],
             activeIndex: 0,
             reverseStatus: true,
             timeOut: '',
