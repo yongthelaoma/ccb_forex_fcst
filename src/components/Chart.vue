@@ -392,7 +392,15 @@ export default {
                         this[type].rate = ((data.last - data.close) / data.close).toFixed(4);
                         this[type].ratePrecent = `${(((data.last - data.close) / data.close) * 100).toFixed(2)}%`;
                     }
+                    localStorage.setItem(`${this.catchItem}${type}`, JSON.stringify(this[type]));
+                } else {
+                    const catchData = JSON.parse(localStorage.getItem(`${this.catchItem}${type}`)) || '[]';
+                    this[type] = this[type];
                 }
+            }
+            ws.onerror = () => {
+                const catchData = JSON.parse(localStorage.getItem(`${this.catchItem}${type}`)) || '[]';
+                this[type] = this[type];
             }
         },
         // 获取统计信息
