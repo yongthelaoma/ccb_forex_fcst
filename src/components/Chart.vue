@@ -524,7 +524,7 @@ export default {
                 series: [
                     {
                         type: 'candlestick',
-                        name: 'Candlestick',
+                        name: '日K',
                         data: data,
                         itemStyle: {
                             normal: {
